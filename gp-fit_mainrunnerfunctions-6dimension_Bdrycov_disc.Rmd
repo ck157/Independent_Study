@@ -1,0 +1,541 @@
+---
+title: "Gaussian_Process_Code"
+author: "Chiwan Kim"
+date: "2/3/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Part 1: Standard Gaussian Process
+
+1-1: Fitting
+
+```{r Fitting_SGP}
+library(rstan)
+source("gp.utility.R")
+
+# Fitting GP model
+stan_dat <- read_rdump('Financial_Data_Put_American.R')
+fit_gp_SGP_American <- stan(file="gp-fit-6dimension_withBS.stan", data=stan_dat,
+               iter=100, chains=1);
+print(fit_gp_SGP_American, pars = c('theta','sigma2','gamma2'))
+sum_gp_SGP_American <- extract(fit_gp_SGP_American,permuted=FALSE)
+```
+
+```{r Computing Means for prediction_SGP}
+# Predicting from GP model
+post_mean_theta_1_SGP <- mean(sum_gp_SGP_American[,1,1]) #theta
+post_mean_theta_2_SGP <- mean(sum_gp_SGP_American[,1,2]) #theta
+post_mean_theta_3_SGP <- mean(sum_gp_SGP_American[,1,3]) #theta
+post_mean_theta_4_SGP <- mean(sum_gp_SGP_American[,1,4]) #theta
+post_mean_theta_5_SGP <- mean(sum_gp_SGP_American[,1,5]) #theta
+post_mean_theta_6_SGP <- mean(sum_gp_SGP_American[,1,6]) #theta
+post_mean_sigma2_SGP <- mean(sum_gp_SGP_American[,1,7]) #sigma2
+post_mean_gamma2_SGP <- mean(sum_gp_SGP_American[,1,8]) #gamma2
+post_mean_mu_SGP <- stan_dat$blackscholes
+
+
+# x2 <- as.numeric(unlist(spx_spy_2019_06_30_put_2017_06_500rows_test['strike_price']))
+# x2<- cbind(spy_2013_01_01_2013_01_31_put$strike_price[201:300],spy_2013_01_01_2013_01_31_put$impl_volatility[201:300])
+# x2 <- seq(from=-2,to=2,by=0.01)
+
+# x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
+
+test_start <- 394
+test_end <- 580
+
+x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
+
+```
+
+```{r Blackscholes}
+library('qrmtools')
+library('ragtop')
+blackscholes_2 <- rep(NA,length(x2[,1]))
+for (row in 1:nrow(data.frame(x2))){
+  blackscholes_2[row] <- as.numeric(blackscholes(-1,S0=x.grid_1[row],K=x.grid_2[row],r=x.grid_6[row],t=x.grid_4[row],vola=x.grid_3[row],divrate=x.grid_5[row])$Price)
+  # blackscholes_2[row] <- Black_Scholes(0,x.grid_1[row],x.grid_6[row],x.grid_3[row],x.grid_2[row],x.grid_4[row],"put")
+}
+```
+
+1-2: Predictions
+
+```{r Predictions_SGP}
+# X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
+
+post_data_SGP_American <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2,N1=length(stan_dat$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
+# post_data
+
+pred_gp_SGP <- stan(file="Predictive GP_6dimension_withBS.stan", data=post_data_SGP_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+```
+
+##Part2:  Bdrycov Gaussian Process
+
+2-1: Fitting
+
+```{r Fitting_Bdrycov}
+# Fitting GP model for Bdrycov
+stan_dat <- read_rdump('Financial_Data_Put_American.R')
+fit_gp_Bdrycov_American <- stan(file="gp-fit-6dimension_withBS_Bdrycov.stan", data=stan_dat,
+               iter=100, chains=1);
+print(fit_gp_Bdrycov_American, pars = c('theta','sigma2','gamma2'))
+sum_gp_Bdrycov_American <- extract(fit_gp_Bdrycov_American,permuted=FALSE)
+# saveRDS(fit_gp,file ="fit_gp_vol50_within50spot_7to19days")
+```
+
+```{r Computing means for prediction_Bdrycov}
+# Predicting from GP model - 2 dimensional case
+post_mean_theta_1_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,1]) #theta
+post_mean_theta_2_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,2]) #theta
+post_mean_theta_3_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,3]) #theta
+post_mean_theta_4_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,4]) #theta
+post_mean_theta_5_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,5]) #theta
+post_mean_theta_6_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,6]) #theta
+post_mean_sigma2_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,7]) #sigma2
+post_mean_gamma2_Bdrycov <- mean(sum_gp_Bdrycov_American[,1,8]) #gamma2
+post_mean_mu_Bdrycov <- stan_dat$blackscholes
+
+
+# x2 <- as.numeric(unlist(spx_spy_2019_06_30_put_2017_06_500rows_test['strike_price']))
+# x2<- cbind(spy_2013_01_01_2013_01_31_put$strike_price[201:300],spy_2013_01_01_2013_01_31_put$impl_volatility[201:300])
+# x2 <- seq(from=-2,to=2,by=0.01)
+
+# x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
+```
+
+2-2: Predictions
+
+```{r Predictions_Bdrycov}
+# X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
+
+post_data_Bdrycov_American <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2,N1=length(stan_dat$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
+# post_data
+
+pred_gp_Bdrycov <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+```
+
+##Part 3 Predictions Versus Truth
+
+3-1: Computing Means Standard GP
+
+```{r Mean & SD of Predictions_SGP}
+#Computing Mean
+y_predict_values_SGP <- extract(pred_gp_SGP,permuted=FALSE)
+y_mean_values_SGP <- c(colMeans(y_predict_values_SGP))
+y_mean_values_SGP <- y_mean_values_SGP[1:(length(y_mean_values_SGP)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_SGP <- summary(pred_gp_SGP, sd=c("sd"))$summary
+pred_gp_sd_SGP <- pred_gp_summary_SGP[, c("sd")]
+y_sd_values_SGP <- pred_gp_sd_SGP[1:(length(pred_gp_sd_SGP)-1)]
+```
+
+3-2: Computing Means Bdrycov
+
+```{r Mean & SD of Predictions_Bdrycov}
+#Computing Mean
+y_predict_values_Bdrycov <- extract(pred_gp_Bdrycov,permuted=FALSE)
+y_mean_values_Bdrycov <- c(colMeans(y_predict_values_Bdrycov))
+y_mean_values_Bdrycov <- y_mean_values_Bdrycov[1:(length(y_mean_values_Bdrycov)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_Bdrycov <- summary(pred_gp_Bdrycov, sd=c("sd"))$summary
+pred_gp_sd_Bdrycov <- pred_gp_summary_Bdrycov[, c("sd")]
+y_sd_values_Bdrycov <- pred_gp_sd_Bdrycov[1:(length(pred_gp_sd_Bdrycov)-1)]
+```
+
+3-3: Plotting Predicted Values against Truth
+
+```{r prediction accuracy}
+par(mfrow=c(1,3))
+#Plotting Standard GP
+plot(log(y_mean_values_SGP),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting BDrycov
+plot(log(y_mean_values_Bdrycov),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting Blackscholes
+plot(log(blackscholes_2),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#MSE
+library('MLmetrics')
+MSE(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(blackscholes_2,stan_dat$total_puts_American$mid_price[test_start:test_end])
+```
+
+
+
+##Part 4 Visualizations
+
+4-1: Contour Plots of Forward Price & Strike Price
+
+```{r contour plots_forward_strike}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+blackscholes_2_cont <- rep(NA,length(x2_cont[,1]))
+for (row in 1:nrow(data.frame(x2_cont))){
+  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont[row,1],K=x2_cont[row,2],r=x2_cont[row,6],t=x2_cont[row,4],vola=x2_cont[row,3],divrate=x2_cont[row,5])$Price)
+}
+
+post_data_cont <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_2_cont,variables = 6)
+# post_data
+
+pred_gp_cont <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_cont,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+#Computing Mean
+y_predict_values_cont <- extract(pred_gp_cont,permuted=FALSE)
+y_mean_values_cont <- c(colMeans(y_predict_values_cont))
+y_mean_values_cont <- y_mean_values_cont[1:(length(y_mean_values_cont)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont <- summary(pred_gp_cont, sd=c("sd"))$summary
+pred_gp_sd_cont <- pred_gp_summary_cont[, c("sd")]
+y_sd_values_cont <- pred_gp_sd_cont[1:(length(pred_gp_sd_cont)-1)]
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+# x1_grid_cont <- seq(from=min(x.grid_1_cont), to=max(x.grid_1_cont), length.out=length(x.grid_1_cont))
+# x2_grid_cont <- seq(from=min(x.grid_2_cont), to=max(x.grid_2_cont), length.out=length(x.grid_2_cont))
+
+contour(dim1, dim2, matrix(y_mean_values_cont, length(dim1), length(dim2)))
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+#Contour of Variance
+contour(dim1, dim2, matrix(y_sd_values_cont, length(dim1), length(dim2)))
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+```
+
+4-2: Contour Plots of Implied VOlatility & Time to Expiration
+
+```{r contour plots_vol_time}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+blackscholes_2_cont <- rep(NA,length(x2_cont[,1]))
+for (row in 1:nrow(data.frame(x2_cont))){
+  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont[row,3],K=x2_cont[row,4],r=x2_cont[row,6],t=x2_cont[row,2],vola=x2_cont[row,1],divrate=x2_cont[row,5])$Price)
+}
+
+post_data_cont <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_2_cont,variables = 6)
+# post_data
+
+pred_gp_cont <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_cont,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+#Computing Mean
+y_predict_values_cont <- extract(pred_gp_cont,permuted=FALSE)
+y_mean_values_cont <- c(colMeans(y_predict_values_cont))
+y_mean_values_cont <- y_mean_values_cont[1:(length(y_mean_values_cont)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont <- summary(pred_gp_cont, sd=c("sd"))$summary
+pred_gp_sd_cont <- pred_gp_summary_cont[, c("sd")]
+y_sd_values_cont <- pred_gp_sd_cont[1:(length(pred_gp_sd_cont)-1)]
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+# x1_grid_cont <- seq(from=min(x.grid_1_cont), to=max(x.grid_1_cont), length.out=length(x.grid_1_cont))
+# x2_grid_cont <- seq(from=min(x.grid_2_cont), to=max(x.grid_2_cont), length.out=length(x.grid_2_cont))
+
+contour(dim1, dim2, matrix(y_mean_values_cont, length(dim1), length(dim2)))
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+#Contour of Variance
+contour(dim1, dim2, matrix(y_sd_values_cont, length(dim1), length(dim2)))
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+```
+
+4-3: Contour Plots of Interest Rate & Time to Expiration
+
+```{r contour plots_rates_time}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+blackscholes_2_cont <- rep(NA,length(x2_cont[,1]))
+for (row in 1:nrow(data.frame(x2_cont))){
+  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont[row,3],K=x2_cont[row,4],r=x2_cont[row,1],t=x2_cont[row,2],vola=x2_cont[row,5],divrate=x2_cont[row,6])$Price)
+}
+
+post_data_cont <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_2_cont,variables = 6)
+# post_data
+
+pred_gp_cont <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_cont,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+#Computing Mean
+y_predict_values_cont <- extract(pred_gp_cont,permuted=FALSE)
+y_mean_values_cont <- c(colMeans(y_predict_values_cont))
+y_mean_values_cont <- y_mean_values_cont[1:(length(y_mean_values_cont)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont <- summary(pred_gp_cont, sd=c("sd"))$summary
+pred_gp_sd_cont <- pred_gp_summary_cont[, c("sd")]
+y_sd_values_cont <- pred_gp_sd_cont[1:(length(pred_gp_sd_cont)-1)]
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+# x1_grid_cont <- seq(from=min(x.grid_1_cont), to=max(x.grid_1_cont), length.out=length(x.grid_1_cont))
+# x2_grid_cont <- seq(from=min(x.grid_2_cont), to=max(x.grid_2_cont), length.out=length(x.grid_2_cont))
+
+contour(dim1, dim2, matrix(y_mean_values_cont, length(dim1), length(dim2)))
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+#Contour of Variance
+contour(dim1, dim2, matrix(y_sd_values_cont, length(dim1), length(dim2)))
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+```
+
+##Part 5: Improving the model by incorporating discrepancy
+
+5-1: Computing Predicted European Option Prices
+
+```{r Fitting_SGP_European}
+library(rstan)
+source("gp.utility.R")
+
+# Fitting GP model
+stan_dat_European <- read_rdump('Financial_Data_Put_European.R')
+fit_gp_SGP_European <- stan(file="gp-fit-6dimension_withBS.stan", data=stan_dat_European,
+               iter=100, chains=1);
+print(fit_gp_SGP_European, pars = c('theta','sigma2','gamma2'))
+sum_gp_SGP_European <- extract(fit_gp_SGP_European,permuted=FALSE)
+```
+
+```{r Computing Means for prediction_SGP}
+# Predicting from GP model
+post_mean_theta_1_SGP <- mean(sum_gp_SGP_European[,1,1]) #theta
+post_mean_theta_2_SGP <- mean(sum_gp_SGP_European[,1,2]) #theta
+post_mean_theta_3_SGP <- mean(sum_gp_SGP_European[,1,3]) #theta
+post_mean_theta_4_SGP <- mean(sum_gp_SGP_European[,1,4]) #theta
+post_mean_theta_5_SGP <- mean(sum_gp_SGP_European[,1,5]) #theta
+post_mean_theta_6_SGP <- mean(sum_gp_SGP_European[,1,6]) #theta
+post_mean_sigma2_SGP <- mean(sum_gp_SGP_European[,1,7]) #sigma2
+post_mean_gamma2_SGP <- mean(sum_gp_SGP_European[,1,8]) #gamma2
+post_mean_mu_SGP <- stan_dat_European$blackscholes
+
+
+# x2 <- as.numeric(unlist(spx_spy_2019_06_30_put_2017_06_500rows_test['strike_price']))
+# x2<- cbind(spy_2013_01_01_2013_01_31_put$strike_price[201:300],spy_2013_01_01_2013_01_31_put$impl_volatility[201:300])
+# x2 <- seq(from=-2,to=2,by=0.01)
+
+# x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
+
+test_start <- 394
+test_end <- 580
+
+x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
+```
+
+```{r Blackscholes}
+library('qrmtools')
+library('ragtop')
+blackscholes_2 <- rep(NA,length(x2[,1]))
+for (row in 1:nrow(data.frame(x2))){
+  blackscholes_2[row] <- as.numeric(blackscholes(-1,S0=x.grid_1[row],K=x.grid_2[row],r=x.grid_6[row],t=x.grid_4[row],vola=x.grid_3[row],divrate=x.grid_5[row])$Price)
+  # blackscholes_2[row] <- Black_Scholes(0,x.grid_1[row],x.grid_6[row],x.grid_3[row],x.grid_2[row],x.grid_4[row],"put")
+}
+```
+
+```{r Predictions_Bdrycov}
+# X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
+
+post_data_Bdrycov_American_disc <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat_European$x,y1=stan_dat_European$y,x_test=x2,N1=length(stan_dat_European$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
+# post_data
+
+pred_gp_Bdrycov_disc <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_American_disc,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+```
+
+```{r Mean & SD of Predictions_Bdrycov}
+#Computing Mean
+y_predict_values_Bdrycov_disc <- extract(pred_gp_Bdrycov_disc,permuted=FALSE)
+y_mean_values_Bdrycov_disc <- c(colMeans(y_predict_values_Bdrycov_disc))
+y_mean_values_Bdrycov_disc <- y_mean_values_Bdrycov_disc[1:(length(y_mean_values_Bdrycov_disc)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_Bdrycov_disc <- summary(pred_gp_Bdrycov_disc, sd=c("sd"))$summary
+pred_gp_sd_Bdrycov_disc <- pred_gp_summary_Bdrycov_disc[, c("sd")]
+y_sd_values_Bdrycov_disc <- pred_gp_sd_Bdrycov_disc[1:(length(pred_gp_sd_Bdrycov_disc)-1)]
+```
+
+3-3: Plotting Predicted Values against Truth
+
+```{r prediction accuracy}
+par(mfrow=c(1,4))
+#Plotting Standard GP
+plot(log(y_mean_values_SGP),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting BDrycov
+plot(log(y_mean_values_Bdrycov),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting Blackscholes
+plot(log(blackscholes_2),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting Blackscholes
+plot(log(y_mean_values_Bdrycov_disc),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#MSE
+library('MLmetrics')
+MSE(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(blackscholes_2,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov_disc,stan_dat$total_puts_American$mid_price[test_start:test_end])
+
+```
+
+MY EXPERIMENT========================================================
+
+
+```{r Fitting_SGP_European}
+library(rstan)
+source("gp.utility.R")
+
+# Fitting GP model
+stan_dat_European_American<- read_rdump('Financial_Data_Put_European_American.R')
+fit_gp_SGP_European_American <- stan(file="gp-fit-6dimension_withBS.stan", data=stan_dat_European_American,
+               iter=100, chains=1);
+print(fit_gp_SGP_European_American, pars = c('theta','sigma2','gamma2'))
+sum_gp_SGP_European_American <- extract(fit_gp_SGP_European_American,permuted=FALSE)
+```
+
+```{r Computing Means for prediction_SGP}
+# Predicting from GP model
+post_mean_theta_1_SGP <- mean(sum_gp_SGP_European[,1,1]) #theta
+post_mean_theta_2_SGP <- mean(sum_gp_SGP_European[,1,2]) #theta
+post_mean_theta_3_SGP <- mean(sum_gp_SGP_European[,1,3]) #theta
+post_mean_theta_4_SGP <- mean(sum_gp_SGP_European[,1,4]) #theta
+post_mean_theta_5_SGP <- mean(sum_gp_SGP_European[,1,5]) #theta
+post_mean_theta_6_SGP <- mean(sum_gp_SGP_European[,1,6]) #theta
+post_mean_sigma2_SGP <- mean(sum_gp_SGP_European[,1,7]) #sigma2
+post_mean_gamma2_SGP <- mean(sum_gp_SGP_European[,1,8]) #gamma2
+post_mean_mu_SGP <- stan_dat_European$blackscholes
+
+
+# x2 <- as.numeric(unlist(spx_spy_2019_06_30_put_2017_06_500rows_test['strike_price']))
+# x2<- cbind(spy_2013_01_01_2013_01_31_put$strike_price[201:300],spy_2013_01_01_2013_01_31_put$impl_volatility[201:300])
+# x2 <- seq(from=-2,to=2,by=0.01)
+
+# x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
+
+test_start <- 394
+test_end <- 580
+
+x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
+```
+
+```{r Blackscholes}
+library('qrmtools')
+library('ragtop')
+blackscholes_2 <- rep(NA,length(x2[,1]))
+for (row in 1:nrow(data.frame(x2))){
+  blackscholes_2[row] <- as.numeric(blackscholes(-1,S0=x.grid_1[row],K=x.grid_2[row],r=x.grid_6[row],t=x.grid_4[row],vola=x.grid_3[row],divrate=x.grid_5[row])$Price)
+  # blackscholes_2[row] <- Black_Scholes(0,x.grid_1[row],x.grid_6[row],x.grid_3[row],x.grid_2[row],x.grid_4[row],"put")
+}
+```
+
+```{r Predictions_Bdrycov}
+# X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
+
+post_data_Bdrycov_American_disc <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat_European$x,y1=stan_dat_European$y,x_test=x2,N1=length(stan_dat_European$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
+# post_data
+
+pred_gp_Bdrycov_disc <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_American_disc,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+```
+
+```{r Mean & SD of Predictions_Bdrycov}
+#Computing Mean
+y_predict_values_Bdrycov_disc <- extract(pred_gp_Bdrycov_disc,permuted=FALSE)
+y_mean_values_Bdrycov_disc <- c(colMeans(y_predict_values_Bdrycov_disc))
+y_mean_values_Bdrycov_disc <- y_mean_values_Bdrycov_disc[1:(length(y_mean_values_Bdrycov_disc)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_Bdrycov_disc <- summary(pred_gp_Bdrycov_disc, sd=c("sd"))$summary
+pred_gp_sd_Bdrycov_disc <- pred_gp_summary_Bdrycov_disc[, c("sd")]
+y_sd_values_Bdrycov_disc <- pred_gp_sd_Bdrycov_disc[1:(length(pred_gp_sd_Bdrycov_disc)-1)]
+```
+
+3-3: Plotting Predicted Values against Truth
+
+```{r prediction accuracy}
+par(mfrow=c(1,4))
+#Plotting Standard GP
+plot(log(y_mean_values_SGP),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting BDrycov
+plot(log(y_mean_values_Bdrycov),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting Blackscholes
+plot(log(blackscholes_2),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#Plotting Blackscholes
+plot(log(y_mean_values_Bdrycov_disc),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+abline(0,1)
+
+#MSE
+library('MLmetrics')
+MSE(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(blackscholes_2,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov_disc,stan_dat$total_puts_American$mid_price[test_start:test_end])
+
+```
