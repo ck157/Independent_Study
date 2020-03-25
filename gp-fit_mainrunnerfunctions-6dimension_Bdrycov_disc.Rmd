@@ -2,7 +2,9 @@
 title: "Gaussian_Process_Code"
 author: "Chiwan Kim"
 date: "2/3/2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -57,7 +59,7 @@ x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 
 ```
 
-```{r Blackscholes}
+```{r Blackscholes-1}
 library('qrmtools')
 library('ragtop')
 blackscholes_2 <- rep(NA,length(x2[,1]))
@@ -331,7 +333,7 @@ points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 5-1: Computing Predicted European Option Prices
 
-```{r Fitting_SGP_European}
+```{r Fitting_SGP_European_discrepancy-1}
 library(rstan)
 source("gp.utility.R")
 
@@ -343,7 +345,7 @@ print(fit_gp_SGP_European, pars = c('theta','sigma2','gamma2'))
 sum_gp_SGP_European <- extract(fit_gp_SGP_European,permuted=FALSE)
 ```
 
-```{r Computing Means for prediction_SGP}
+```{r Computing Means for prediction_SGP_European_discrepancy-1}
 # Predicting from GP model
 post_mean_theta_1_SGP <- mean(sum_gp_SGP_European[,1,1]) #theta
 post_mean_theta_2_SGP <- mean(sum_gp_SGP_European[,1,2]) #theta
@@ -374,7 +376,7 @@ x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:tes
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 ```
 
-```{r Blackscholes}
+```{r Blackscholes-2}
 library('qrmtools')
 library('ragtop')
 blackscholes_2 <- rep(NA,length(x2[,1]))
@@ -384,7 +386,7 @@ for (row in 1:nrow(data.frame(x2))){
 }
 ```
 
-```{r Predictions_Bdrycov}
+```{r Predictions_Bdrycov_discrepancy-1}
 # X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
 
 post_data_Bdrycov_American_disc <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat_European$x,y1=stan_dat_European$y,x_test=x2,N1=length(stan_dat_European$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
@@ -393,7 +395,7 @@ post_data_Bdrycov_American_disc <- list(theta=c(post_mean_theta_1_SGP,post_mean_
 pred_gp_Bdrycov_disc <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_American_disc,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 ```
 
-```{r Mean & SD of Predictions_Bdrycov}
+```{r Mean & SD of Predictions_Bdrycov_disc-1}
 #Computing Mean
 y_predict_values_Bdrycov_disc <- extract(pred_gp_Bdrycov_disc,permuted=FALSE)
 y_mean_values_Bdrycov_disc <- c(colMeans(y_predict_values_Bdrycov_disc))
@@ -407,7 +409,7 @@ y_sd_values_Bdrycov_disc <- pred_gp_sd_Bdrycov_disc[1:(length(pred_gp_sd_Bdrycov
 
 3-3: Plotting Predicted Values against Truth
 
-```{r prediction accuracy}
+```{r prediction accuracy_disc-1}
 par(mfrow=c(1,4))
 #Plotting Standard GP
 plot(log(y_mean_values_SGP),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
@@ -437,7 +439,7 @@ MSE(y_mean_values_Bdrycov_disc,stan_dat$total_puts_American$mid_price[test_start
 MY EXPERIMENT========================================================
 
 
-```{r Fitting_SGP_European}
+```{r Fitting_SGP_European_disc-2}
 library(rstan)
 source("gp.utility.R")
 
@@ -449,7 +451,7 @@ print(fit_gp_SGP_European_American, pars = c('theta','sigma2','gamma2'))
 sum_gp_SGP_European_American <- extract(fit_gp_SGP_European_American,permuted=FALSE)
 ```
 
-```{r Computing Means for prediction_SGP}
+```{r Computing Means for prediction_SGP_disc-2}
 # Predicting from GP model
 post_mean_theta_1_SGP <- mean(sum_gp_SGP_European_American[,1,1]) #theta
 post_mean_theta_2_SGP <- mean(sum_gp_SGP_European_American[,1,2]) #theta
@@ -480,7 +482,7 @@ x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:tes
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 ```
 
-```{r Blackscholes}
+```{r Blackscholes-3}
 library('qrmtools')
 library('ragtop')
 blackscholes_2 <- rep(NA,length(x2[,1]))
@@ -490,7 +492,7 @@ for (row in 1:nrow(data.frame(x2))){
 }
 ```
 
-```{r Predictions_Bdrycov}
+```{r Predictions_Bdrycov_discrepancy-2}
 # X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
 
 post_data_Bdrycov_European_American_disc <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat_European_American$x,y1=stan_dat_European_American$y,x_test=x2,N1=length(stan_dat_European_American$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
@@ -499,7 +501,7 @@ post_data_Bdrycov_European_American_disc <- list(theta=c(post_mean_theta_1_SGP,p
 pred_gp_Bdrycov_disc <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_European_American_disc,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 ```
 
-```{r Mean & SD of Predictions_Bdrycov}
+```{r Mean & SD of Predictions_Bdrycov_discrepancy-2}
 #Computing Mean
 y_predict_values_Bdrycov_disc <- extract(pred_gp_Bdrycov_disc,permuted=FALSE)
 y_mean_values_Bdrycov_disc <- c(colMeans(y_predict_values_Bdrycov_disc))
@@ -513,7 +515,7 @@ y_sd_values_Bdrycov_disc <- pred_gp_sd_Bdrycov_disc[1:(length(pred_gp_sd_Bdrycov
 
 3-3: Plotting Predicted Values against Truth
 
-```{r prediction accuracy}
+```{r prediction accuracy_discrepancy-2}
 par(mfrow=c(1,4))
 #Plotting Standard GP
 plot(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end]) 
