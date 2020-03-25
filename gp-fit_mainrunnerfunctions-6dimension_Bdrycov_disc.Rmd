@@ -451,15 +451,15 @@ sum_gp_SGP_European_American <- extract(fit_gp_SGP_European_American,permuted=FA
 
 ```{r Computing Means for prediction_SGP}
 # Predicting from GP model
-post_mean_theta_1_SGP <- mean(sum_gp_SGP_European[,1,1]) #theta
-post_mean_theta_2_SGP <- mean(sum_gp_SGP_European[,1,2]) #theta
-post_mean_theta_3_SGP <- mean(sum_gp_SGP_European[,1,3]) #theta
-post_mean_theta_4_SGP <- mean(sum_gp_SGP_European[,1,4]) #theta
-post_mean_theta_5_SGP <- mean(sum_gp_SGP_European[,1,5]) #theta
-post_mean_theta_6_SGP <- mean(sum_gp_SGP_European[,1,6]) #theta
-post_mean_sigma2_SGP <- mean(sum_gp_SGP_European[,1,7]) #sigma2
-post_mean_gamma2_SGP <- mean(sum_gp_SGP_European[,1,8]) #gamma2
-post_mean_mu_SGP <- stan_dat_European$blackscholes
+post_mean_theta_1_SGP <- mean(sum_gp_SGP_European_American[,1,1]) #theta
+post_mean_theta_2_SGP <- mean(sum_gp_SGP_European_American[,1,2]) #theta
+post_mean_theta_3_SGP <- mean(sum_gp_SGP_European_American[,1,3]) #theta
+post_mean_theta_4_SGP <- mean(sum_gp_SGP_European_American[,1,4]) #theta
+post_mean_theta_5_SGP <- mean(sum_gp_SGP_European_American[,1,5]) #theta
+post_mean_theta_6_SGP <- mean(sum_gp_SGP_European_American[,1,6]) #theta
+post_mean_sigma2_SGP <- mean(sum_gp_SGP_European_American[,1,7]) #sigma2
+post_mean_gamma2_SGP <- mean(sum_gp_SGP_European_American[,1,8]) #gamma2
+post_mean_mu_SGP <- stan_dat_European_American$blackscholes
 
 
 # x2 <- as.numeric(unlist(spx_spy_2019_06_30_put_2017_06_500rows_test['strike_price']))
@@ -493,10 +493,10 @@ for (row in 1:nrow(data.frame(x2))){
 ```{r Predictions_Bdrycov}
 # X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
 
-post_data_Bdrycov_American_disc <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat_European$x,y1=stan_dat_European$y,x_test=x2,N1=length(stan_dat_European$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
+post_data_Bdrycov_European_American_disc <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat_European_American$x,y1=stan_dat_European_American$y,x_test=x2,N1=length(stan_dat_European_American$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
 # post_data
 
-pred_gp_Bdrycov_disc <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_American_disc,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+pred_gp_Bdrycov_disc <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_European_American_disc,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 ```
 
 ```{r Mean & SD of Predictions_Bdrycov}
@@ -516,19 +516,19 @@ y_sd_values_Bdrycov_disc <- pred_gp_sd_Bdrycov_disc[1:(length(pred_gp_sd_Bdrycov
 ```{r prediction accuracy}
 par(mfrow=c(1,4))
 #Plotting Standard GP
-plot(log(y_mean_values_SGP),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+plot(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end]) 
 abline(0,1)
 
 #Plotting BDrycov
-plot(log(y_mean_values_Bdrycov),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+plot(y_mean_values_Bdrycov,stan_dat$total_puts_American$mid_price[test_start:test_end]) 
 abline(0,1)
 
 #Plotting Blackscholes
-plot(log(blackscholes_2),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+plot(blackscholes_2,stan_dat$total_puts_American$mid_price[test_start:test_end]) 
 abline(0,1)
 
 #Plotting Blackscholes
-plot(log(y_mean_values_Bdrycov_disc),log(stan_dat$total_puts_American$mid_price[test_start:test_end])) 
+plot(y_mean_values_Bdrycov_disc,stan_dat$total_puts_American$mid_price[test_start:test_end]) 
 abline(0,1)
 
 #MSE
