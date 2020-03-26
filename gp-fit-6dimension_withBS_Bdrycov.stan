@@ -40,7 +40,7 @@ model {
   
   // priors
   for (v in 1:variables) {
-    theta[v] ~ inv_gamma(0.01,0.01);
+    theta[v] ~ inv_gamma(0.1,0.1);
   }
   sigma2 ~ inv_gamma(0.01,0.01);
   gamma2 ~ inv_gamma(0.01,0.01);
