@@ -23,9 +23,9 @@ total_puts_European_American <- rbind(total_puts_European,total_puts_American)
 # total_puts <- total_puts[total_puts$dividend_yield > 0 & total_puts$dividend_yield < 0.015, ]
 
 training_start_European <- 1 #06/3
-training_end_European <- 458 #06/10
+training_end_European <- 416 #06/07
 training_start_American <- 2151 #06/3
-training_end_American <- 2543 #06/10
+training_end_American <- 2472 #06/07
 
 N <- (training_end_European - training_start_European + 1) + (training_end_American - training_start_American + 1)
 

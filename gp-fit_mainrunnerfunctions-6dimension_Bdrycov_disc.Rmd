@@ -3,6 +3,7 @@ title: "Gaussian_Process_Code"
 author: "Chiwan Kim"
 date: "2/3/2020"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -46,8 +47,8 @@ post_mean_mu_SGP <- stan_dat$blackscholes
 
 # x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
 
-test_start <- 394
-test_end <- 580
+test_start <- 323
+test_end <- 559
 
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
@@ -364,8 +365,8 @@ post_mean_mu_SGP <- stan_dat_European$blackscholes
 
 # x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
 
-test_start <- 394
-test_end <- 580
+test_start <- 323
+test_end <- 559
 
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
@@ -470,8 +471,8 @@ post_mean_mu_SGP <- stan_dat_European_American$blackscholes
 
 # x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
 
-test_start <- 394
-test_end <- 580
+test_start <- 323
+test_end <- 559
 
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])

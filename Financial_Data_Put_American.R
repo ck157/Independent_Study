@@ -24,7 +24,7 @@ total_puts_American <- total_puts %>%
 # total_puts <- total_puts[total_puts$dividend_yield > 0 & total_puts$dividend_yield < 0.015, ]
 
 training_start <- 1 #06/3
-training_end <- 393 #06/10
+training_end <- 322 #06/07
 
 N <- training_end - training_start + 1
 
