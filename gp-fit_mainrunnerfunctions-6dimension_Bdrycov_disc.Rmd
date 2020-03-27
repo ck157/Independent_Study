@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1-1: Fitting
 
-```{r Fitting_SGP}
+```{r Fitting_SGP, warning = FALSE}
 library(rstan)
 source("gp.utility.R")
 
@@ -47,11 +47,11 @@ post_mean_mu_SGP <- stan_dat$blackscholes
 
 # x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
 
-# test_start <- 323 #06/10 
-# test_end <- 559 #06/14
+test_start <- 323 #06/10
+test_end <- 559 #06/14
 
-test_start <- 560 #06/17
-test_end <- 852 #06/20
+# test_start <- 560 #06/17
+# test_end <- 852 #06/20
 
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
@@ -88,7 +88,7 @@ pred_gp_SGP <- stan(file="Predictive GP_6dimension_withBS.stan", data=post_data_
 
 2-1: Fitting
 
-```{r Fitting_Bdrycov}
+```{r Fitting_Bdrycov,warning = FALSE}
 # Fitting GP model for Bdrycov
 stan_dat <- read_rdump('Financial_Data_Put_American.R')
 fit_gp_Bdrycov_American <- stan(file="gp-fit-6dimension_withBS_Bdrycov.stan", data=stan_dat,
@@ -337,7 +337,7 @@ points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 5-1: Computing Predicted European Option Prices
 
-```{r Fitting_SGP_European_discrepancy-1}
+```{r Fitting_SGP_European_discrepancy-1,warning = FALSE}
 library(rstan)
 source("gp.utility.R")
 
@@ -367,12 +367,6 @@ post_mean_mu_SGP <- stan_dat_European$blackscholes
 # x2 <- seq(from=-2,to=2,by=0.01)
 
 # x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
-
-# test_start <- 323 #06/10 
-# test_end <- 559 #06/14
-
-test_start <- 560 #06/17
-test_end <- 852 #06/20
 
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
@@ -446,7 +440,7 @@ MSE(y_mean_values_Bdrycov_disc,stan_dat$total_puts_American$mid_price[test_start
 MY EXPERIMENT========================================================
 
 
-```{r Fitting_SGP_European_disc-2}
+```{r Fitting_SGP_European_disc-2,warning = FALSE}
 library(rstan)
 source("gp.utility.R")
 
@@ -476,12 +470,6 @@ post_mean_mu_SGP <- stan_dat_European_American$blackscholes
 # x2 <- seq(from=-2,to=2,by=0.01)
 
 # x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
-
-# test_start <- 323 #06/10 
-# test_end <- 559 #06/14
-
-test_start <- 560 #06/17
-test_end <- 852 #06/20
 
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])

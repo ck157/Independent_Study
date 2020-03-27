@@ -23,11 +23,11 @@ total_puts_American <- total_puts %>%
 #               (total_puts$time_to_exp<=0.072&total_puts$time_to_exp>=0.028)), ]
 # total_puts <- total_puts[total_puts$dividend_yield > 0 & total_puts$dividend_yield < 0.015, ]
 
-# training_start <- 1 #06/03
-# training_end <- 322 #06/07
+training_start <- 1 #06/03
+training_end <- 322 #06/07
 
-training_start <- 323 #06/10
-training_end <- 559 #06/14
+# training_start <- 323 #06/10
+# training_end <- 559 #06/14
 
 N <- training_end - training_start + 1
 
