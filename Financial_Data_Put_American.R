@@ -2,10 +2,10 @@
 library(readr)
 library(dplyr)
 library(stringr)
-total_puts <- read_csv("~/projects/Independent_Study/spy_spx_(2019.06.01~2019.06.30)_Puts.xlsb.csv")
+# total_puts <- read_csv("~/projects/Independent_Study/spy_spx_(2019.06.01~2019.06.30)_Puts.xlsb.csv")
+total_puts <- read_csv("C:/Users/CK/Desktop/CK/Duke/Honors Thesis/Github/Independent_Study/spy_spx_(2019.06.01~2019.06.30)_Puts.xlsb.csv")
 total_puts <- total_puts[complete.cases(total_puts),]
 total_puts$strike_price <- total_puts$strike_price/1000
-total_puts$time_to_exp <- total_puts$time_to_exp/250
 total_puts$interest_rate <- total_puts$interest_rate/100
 range01 <- function(x){(x-min(x))/(max(x)-min(x))} #Scaling
 total_puts$strike_price <- range01(total_puts$strike_price)

@@ -5,7 +5,6 @@ library(stringr)
 total_calls <- read_csv("~/projects/Independent_Study/spy_spx_(2019.06.01~2019.06.30)_Calls.xlsb.csv")
 total_calls <- total_calls[complete.cases(total_calls),]
 total_calls$strike_price <- total_calls$strike_price/1000
-total_calls$time_to_exp <- total_calls$time_to_exp/250
 total_calls$interest_rate <- total_calls$interest_rate/100
 range01 <- function(x){(x-min(x))/(max(x)-min(x))} #Scaling
 total_calls$strike_price <- range01(total_calls$strike_price)
