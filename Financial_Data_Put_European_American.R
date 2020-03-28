@@ -52,6 +52,8 @@ total_puts_American$strike_price_scaled <- range01(total_puts_American$strike_pr
 total_puts_American$forward_price_scaled <- range01(total_puts_American$forward_price)
 total_puts_European$strike_price_scaled <- range01(total_puts_European$strike_price)
 total_puts_European$forward_price_scaled <- range01(total_puts_European$forward_price)
+total_puts_American$time_to_exp_scaled <- range01(total_puts_American$time_to_exp)
+total_puts_European$time_to_exp_scaled <- range01(total_puts_European$time_to_exp)
 
 
 total_puts_European_American <- rbind(total_puts_European,total_puts_American)
@@ -59,7 +61,7 @@ total_puts_European_American <- rbind(total_puts_European,total_puts_American)
 x_1 <- as.numeric(total_puts_European_American$forward_price_scaled[c(training_start_European:training_end_European,training_start_American:training_end_American)])
 x_2 <- as.numeric(total_puts_European_American$strike_price_Scaled[c(training_start_European:training_end_European,training_start_American:training_end_American)])
 x_3 <- as.numeric(total_puts_European_American$impl_volatility[c(training_start_European:training_end_European,training_start_American:training_end_American)])
-x_4 <- as.numeric(total_puts_European_American$time_to_exp[c(training_start_European:training_end_European,training_start_American:training_end_American)])
+x_4 <- as.numeric(total_puts_European_American$time_to_exp_scaled[c(training_start_European:training_end_European,training_start_American:training_end_American)])
 x_5 <- as.numeric(total_puts_European_American$dividend_yield[c(training_start_European:training_end_European,training_start_American:training_end_American)])
 x_6 <- as.numeric(total_puts_European_American$interest_rate[c(training_start_European:training_end_European,training_start_American:training_end_American)])
 

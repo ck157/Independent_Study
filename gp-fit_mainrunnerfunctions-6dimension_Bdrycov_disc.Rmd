@@ -68,7 +68,7 @@ for (row in 1:nrow(data.frame(x2))){
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
 x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
 x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
 x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
@@ -197,15 +197,25 @@ dim2 <- seq(0.000000001,1.000000001,length.out = 25)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
 x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
 x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-blackscholes_2_cont <- rep(NA,length(x2_cont[,1]))
-for (row in 1:nrow(data.frame(x2_cont))){
-  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont[row,1],K=x2_cont[row,2],r=x2_cont[row,6],t=x2_cont[row,4],vola=x2_cont[row,3],divrate=x2_cont[row,5])$Price)
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+
+x2_cont_bs <- cbind(X.grid,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_2_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,1],K=x2_cont_bs[row,2],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,5])$Price)
 }
 
 
@@ -253,10 +263,20 @@ x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-blackscholes_2_cont <- rep(NA,length(x2_cont[,1]))
-for (row in 1:nrow(data.frame(x2_cont))){
-  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont[row,3],K=x2_cont[row,4],r=x2_cont[row,6],t=x2_cont[row,2],vola=x2_cont[row,1],divrate=x2_cont[row,5])$Price)
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+x2_cont_bs <- cbind(X.grid,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_2_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,1],K=x2_cont_bs[row,2],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,5])$Price)
 }
+
 
 post_data_cont <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_2_cont,variables = 6)
 # post_data
@@ -302,10 +322,20 @@ x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-blackscholes_2_cont <- rep(NA,length(x2_cont[,1]))
-for (row in 1:nrow(data.frame(x2_cont))){
-  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont[row,3],K=x2_cont[row,4],r=x2_cont[row,1],t=x2_cont[row,2],vola=x2_cont[row,5],divrate=x2_cont[row,6])$Price)
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+
+x2_cont_bs <- cbind(X.grid,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_2_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,1],K=x2_cont_bs[row,2],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,5])$Price)
 }
+
 
 post_data_cont <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_2_cont,variables = 6)
 # post_data

@@ -42,11 +42,12 @@ blackscholes
 range01 <- function(x){(x-min(x))/(max(x)-min(x))} #Scaling
 total_puts_European$strike_price_scaled <- range01(total_puts_European$strike_price)
 total_puts_European$forward_price_scaled <- range01(total_puts_European$forward_price)
+total_puts_European$time_to_exp_scaled <- range01(total_puts_European$time_to_exp)
 
 x_1 <- as.numeric(total_puts_European$forward_price_scaled[training_start:training_end])
 x_2 <- as.numeric(total_puts_European$strike_price_scaled[training_start:training_end])
 x_3 <- as.numeric(total_puts_European$impl_volatility[training_start:training_end])
-x_4 <- as.numeric(total_puts_European$time_to_exp[training_start:training_end])
+x_4 <- as.numeric(total_puts_European$time_to_exp_scaled[training_start:training_end])
 x_5 <- as.numeric(total_puts_European$dividend_yield[training_start:training_end])
 x_6 <- as.numeric(total_puts_European$interest_rate[training_start:training_end])
 
