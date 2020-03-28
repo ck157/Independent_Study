@@ -40,13 +40,9 @@ post_mean_sigma2_SGP <- mean(sum_gp_SGP_American[,1,7]) #sigma2
 post_mean_gamma2_SGP <- mean(sum_gp_SGP_American[,1,8]) #gamma2
 post_mean_mu_SGP <- stan_dat$blackscholes
 
+```
 
-# x2 <- as.numeric(unlist(spx_spy_2019_06_30_put_2017_06_500rows_test['strike_price']))
-# x2<- cbind(spy_2013_01_01_2013_01_31_put$strike_price[201:300],spy_2013_01_01_2013_01_31_put$impl_volatility[201:300])
-# x2 <- seq(from=-2,to=2,by=0.01)
-
-# x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
-
+```{r Blackscholes and assigning test data-1}
 test_start <- 323 #06/10
 test_end <- 559 #06/14
 
@@ -56,14 +52,11 @@ test_end <- 559 #06/14
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
 x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end]*250)
 x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
 x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 
-```
-
-```{r Blackscholes-1}
 library('qrmtools')
 library('ragtop')
 blackscholes_2 <- rep(NA,length(x2[,1]))
@@ -71,12 +64,19 @@ for (row in 1:nrow(data.frame(x2))){
   blackscholes_2[row] <- as.numeric(blackscholes(-1,S0=x.grid_1[row],K=x.grid_2[row],r=x.grid_6[row],t=x.grid_4[row],vola=x.grid_3[row],divrate=x.grid_5[row])$Price)
   # blackscholes_2[row] <- Black_Scholes(0,x.grid_1[row],x.grid_6[row],x.grid_3[row],x.grid_2[row],x.grid_4[row],"put")
 }
+
+x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 ```
 
 1-2: Predictions
 
 ```{r Predictions_SGP}
-# X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
 
 post_data_SGP_American <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2,N1=length(stan_dat$x[,1]),N2=length(x2[,1]), bs = blackscholes_2,variables = 6)
 # post_data
@@ -189,11 +189,11 @@ MSE(blackscholes_2,stan_dat$total_puts_American$mid_price[test_start:test_end])
 4-1: Contour Plots of Forward Price & Strike Price
 
 ```{r contour plots_forward_strike}
-x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
-x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
 
-dim1 <- seq(0,1,length.out = 25)
-dim2 <- seq(0,1,length.out = 25)
+dim1 <- seq(0.000000001,1.000000001,length.out = 25)
+dim2 <- seq(0.000000001,1.000000001,length.out = 25)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
 x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
@@ -207,6 +207,7 @@ blackscholes_2_cont <- rep(NA,length(x2_cont[,1]))
 for (row in 1:nrow(data.frame(x2_cont))){
   blackscholes_2_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont[row,1],K=x2_cont[row,2],r=x2_cont[row,6],t=x2_cont[row,4],vola=x2_cont[row,3],divrate=x2_cont[row,5])$Price)
 }
+
 
 post_data_cont <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_2_cont,variables = 6)
 # post_data
@@ -241,12 +242,12 @@ points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
 x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
 
-dim1 <- seq(0,1,length.out = 25)
-dim2 <- seq(0,1,length.out = 25)
+dim1 <- seq(0.000000001,1.000000001,length.out = 25)
+dim2 <- seq(0.000000001,1.000000001,length.out = 25)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
-x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
 x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
@@ -290,12 +291,12 @@ points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
 x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
 
-dim1 <- seq(0,1,length.out = 25)
-dim2 <- seq(0,1,length.out = 25)
+dim1 <- seq(0.000000001,1.000000001,length.out = 25)
+dim2 <- seq(0.000000001,1.000000001,length.out = 25)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
-x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
 x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
 
@@ -362,12 +363,10 @@ post_mean_gamma2_SGP <- mean(sum_gp_SGP_European[,1,8]) #gamma2
 post_mean_mu_SGP <- stan_dat_European$blackscholes
 
 
-# x2 <- as.numeric(unlist(spx_spy_2019_06_30_put_2017_06_500rows_test['strike_price']))
-# x2<- cbind(spy_2013_01_01_2013_01_31_put$strike_price[201:300],spy_2013_01_01_2013_01_31_put$impl_volatility[201:300])
-# x2 <- seq(from=-2,to=2,by=0.01)
 
-# x2 <- cbind(seq(from=0,to=1,by=0.01),seq(from=0,to=1,by=0.01))
+```
 
+```{r Blackscholes and assigning test data -2}
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
 x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
@@ -375,9 +374,7 @@ x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_
 x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
 x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
-```
 
-```{r Blackscholes-2}
 library('qrmtools')
 library('ragtop')
 blackscholes_2 <- rep(NA,length(x2[,1]))
@@ -385,6 +382,15 @@ for (row in 1:nrow(data.frame(x2))){
   blackscholes_2[row] <- as.numeric(blackscholes(-1,S0=x.grid_1[row],K=x.grid_2[row],r=x.grid_6[row],t=x.grid_4[row],vola=x.grid_3[row],divrate=x.grid_5[row])$Price)
   # blackscholes_2[row] <- Black_Scholes(0,x.grid_1[row],x.grid_6[row],x.grid_3[row],x.grid_2[row],x.grid_4[row],"put")
 }
+
+x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
+
 ```
 
 ```{r Predictions_Bdrycov_discrepancy-1}

@@ -51,7 +51,7 @@ functions {
       v_pred = mdivide_left_tri_low(L_K, k_x1_x2);
        
       for (i in 1:N2) {
-        K2[i, i] = gamma2; //diagonal
+        K2[i, i] = gamma2 + 1e-8; //diagonal
         for (j in (i+1):N2) { //off-diagonals
           K2[i,j] = 1.0;
           for (l in 1:variables){

@@ -27,7 +27,7 @@ N <- training_end - training_start + 1
 x_1 <- as.numeric(total_puts_European$forward_price[training_start:training_end])
 x_2 <- as.numeric(total_puts_European$strike_price[training_start:training_end])
 x_3 <- as.numeric(total_puts_European$impl_volatility[training_start:training_end])
-x_4 <- as.numeric(total_puts_European$time_to_exp[training_start:training_end])
+x_4 <- as.numeric(total_puts_European$time_to_exp[training_start:training_end]*250)
 x_5 <- as.numeric(total_puts_European$dividend_yield[training_start:training_end])
 x_6 <- as.numeric(total_puts_European$interest_rate[training_start:training_end])
 
@@ -35,7 +35,7 @@ x <- cbind(x_1,x_2,x_3,x_4,x_5,x_6)
 
 blackscholes <- rep(NA,N)
 for (row in 1:nrow(data.frame(x))){
-  blackscholes[row] <- as.numeric(blackscholes(-1,S0=x_1[row],K=x_2[row],r=x_6[row],t=x_4[row],vola=x_3[row],divrate=x_5[row]))
+  blackscholes[row] <- as.numeric(blackscholes(-1,S0=x_1[row],K=x_2[row],r=x_6[row],t=x_4[row],vola=x_3[row],divrate=x_5[row])$Price)
 }
 blackscholes
 
