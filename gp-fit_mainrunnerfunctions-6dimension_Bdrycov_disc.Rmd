@@ -370,7 +370,7 @@ post_mean_mu_SGP <- stan_dat_European$blackscholes
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
 x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end]*250)
 x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
 x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
