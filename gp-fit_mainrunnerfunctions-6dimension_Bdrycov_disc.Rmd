@@ -49,12 +49,7 @@ test_end <- 559 #06/14
 # test_start <- 560 #06/17
 # test_end <- 852 #06/20
 
-# x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
-# x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
-# x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
-# x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
-# x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
-# x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+
 x2_bs <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end]),as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end]),x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end]),as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end]))
 
 library('qrmtools')
@@ -262,7 +257,7 @@ x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility [test_start:test_end])
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
 x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
 x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
 x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
@@ -398,28 +393,12 @@ post_mean_mu_SGP <- stan_dat_European$blackscholes
 ```
 
 ```{r Blackscholes and assigning test data -2}
-x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
-x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
-x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end]*250)
-x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
-x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
-x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
-
-library('qrmtools')
-library('ragtop')
-blackscholes_2 <- rep(NA,length(x2[,1]))
-for (row in 1:nrow(data.frame(x2))){
-  blackscholes_2[row] <- as.numeric(blackscholes(-1,S0=x.grid_1[row],K=x.grid_2[row],r=x.grid_6[row],t=x.grid_4[row],vola=x.grid_3[row],divrate=x.grid_5[row])$Price)
-  # blackscholes_2[row] <- Black_Scholes(0,x.grid_1[row],x.grid_6[row],x.grid_3[row],x.grid_2[row],x.grid_4[row],"put")
-}
-
 x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
 x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
-x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
-x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend[test_start:test_end])
-x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 
 ```
@@ -460,6 +439,7 @@ abline(0,1)
 #Plotting Blackscholes
 plot(log(blackscholes_2),log(stan_dat$total_puts_American$mid_price[test_start:test_end]), xlim = c(min(log(blackscholes_2),na.rm=TRUE), max(log(blackscholes_2),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end]))))
 abline(0,1)
+
 
 #Plotting Discrepancy Model
 plot(log(y_mean_values_Bdrycov_disc),log(stan_dat$total_puts_American$mid_price[test_start:test_end]), xlim = c(min(log(y_mean_values_Bdrycov_disc),na.rm=TRUE), max(log(y_mean_values_Bdrycov_disc),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end]))))
