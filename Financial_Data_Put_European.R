@@ -13,11 +13,11 @@ total_puts_European <- total_puts %>%
   filter(str_detect(exercise_style,"E")) %>% 
   filter(volume > 50) 
 
-total_puts_European <- total_puts_European[(total_puts_European$time_to_exp<=6&total_puts_European$time_to_exp>=1.24), ]
+total_puts_European <- total_puts_European[(total_puts_European$time_to_exp<=6), ]
 # total_puts <- total_puts[total_puts$dividend_yield > 0 & total_puts$dividend_yield < 0.015, ]
 
 training_start <- 1 #06/03
-training_end <- 144 #06/07
+training_end <- 4607 #06/07
 
 # training_start <- 145 #06/10
 # training_end <- 252 #06/14
