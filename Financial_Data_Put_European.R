@@ -19,8 +19,8 @@ total_puts_European <- total_puts_European[(total_puts_European$time_to_exp<=6 &
 training_start <- 1 #06/03
 training_end <- 882 #06/07
 
-# training_start <- 145 #06/10
-# training_end <- 252 #06/14
+# training_start <- 883 #06/10
+# training_end <- 1602 #06/14
 
 N <- training_end - training_start + 1
 
