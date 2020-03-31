@@ -16,8 +16,8 @@ total_puts_European <- total_puts %>%
 total_puts_European <- total_puts_European[(total_puts_European$time_to_exp<=6 & total_puts_European$time_to_exp >= 0.3), ]
 # total_puts <- total_puts[total_puts$dividend_yield > 0 & total_puts$dividend_yield < 0.015, ]
 
-# training_start <- 1 #06/03
-# training_end <- 882 #06/07
+training_start <- 1 #06/03
+training_end <- 882 #06/07
 
 # training_start <- 883 #06/10
 # training_end <- 1602 #06/14

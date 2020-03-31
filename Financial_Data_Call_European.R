@@ -47,7 +47,7 @@ total_calls_European$strike_price_scaled <- range01(total_calls_European$strike_
 total_calls_European$forward_price_scaled <- range01(total_calls_European$forward_price)
 total_calls_European$time_to_exp_scaled <- range01(total_calls_European$time_to_exp)
 total_calls_European$impl_volatility_scaled <- range01(total_calls_European$impl_volatility)
-total_calls_European$dividend_yield_scaled <- range01(total_calls_European$dividend_yield)
+total_calls_European$dividend_yield_scaled <- total_calls_European$dividend_yield
 total_calls_European$interest_rate_scaled <- range01(total_calls_European$interest_rate)
 
 
