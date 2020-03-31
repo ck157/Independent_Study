@@ -14,11 +14,11 @@ total_puts_American <- total_puts %>%
   filter(volume > 50)
 
 
-training_start <- 1 #06/03
-training_end <- 322 #06/07
+# training_start <- 1 #06/03
+# training_end <- 322 #06/07
 
-# training_start <- 323 #06/03
-# training_end <- 559 #06/07
+training_start <- 323 #06/03
+training_end <- 559 #06/07
 
 N <- training_end - training_start + 1
 
