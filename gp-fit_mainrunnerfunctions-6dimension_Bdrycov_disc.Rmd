@@ -23,8 +23,8 @@ library(rstan)
 source("gp.utility.R")
 
 # Fitting GP model
-stan_dat <- read_rdump('Financial_Data_Call_American.R')
-fit_gp_SGP_American <- stan(file="gp-fit-6dimension_withBS.stan", data=stan_dat,
+stan_dat <- read_rdump('Financial_Data_Put_American.R')
+fit_gp_SGP_American <- stan(file="gp-fit-6dimension_withBS_SGP.stan", data=stan_dat,
                iter=100, chains=1);
 print(fit_gp_SGP_American, pars = c('theta','sigma2','gamma2'))
 sum_gp_SGP_American <- extract(fit_gp_SGP_American,permuted=FALSE)
@@ -45,35 +45,36 @@ post_mean_mu_SGP <- stan_dat$blackscholes
 ```
 
 ```{r Blackscholes and assigning test data-1}
-# test_start <- 323 #06/10 Puts
-# test_end <- 559 #06/14 Puts
+test_start <- 323 #06/10 Puts
+test_end <- 559 #06/14 Puts
 
 # test_start <- 560 #06/17 Puts
 # test_end <- 852 #06/20 Puts
 
-test_start <- 269 #06/10 Calls
-test_end <- 432 #06/14 Calls
+# test_start <- 609 #06/10 Calls
+# test_end <- 999 #06/14 Calls
 
 # test_start <- 433 #06/17 Calls
 # test_end <- 700 #06/20 Calls
 
-x2_bs <- cbind(as.numeric(stan_dat$total_calls_American$forward_price[test_start:test_end]),as.numeric(stan_dat$total_calls_American$strike_price[test_start:test_end]),as.numeric(stan_dat$total_calls_American$impl_volatility[test_start:test_end]),as.numeric(stan_dat$total_calls_American$time_to_exp[test_start:test_end]),x.grid_5 <- as.numeric(stan_dat$total_calls_American$dividend_yield[test_start:test_end]),as.numeric(stan_dat$total_calls_American$interest_rate[test_start:test_end]))
+x2_bs <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end]),as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end]),x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end]),as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end]))
 
 
 library('qrmtools')
 library('ragtop')
 blackscholes_test <- rep(NA,length(x2_bs[,1]))
 for (row in 1:nrow(data.frame(x2_bs))){
-  blackscholes_test[row] <- as.numeric(blackscholes(1,S0=as.numeric(stan_dat$total_calls_American$forward_price[test_start:test_end])[row],K=as.numeric(stan_dat$total_calls_American$strike_price[test_start:test_end])[row],r=as.numeric(stan_dat$total_calls_American$interest_rate[test_start:test_end])[row],t=as.numeric(stan_dat$total_calls_American$time_to_exp[test_start:test_end])[row],vola=as.numeric(stan_dat$total_calls_American$impl_volatility[test_start:test_end])[row],divrate=as.numeric(stan_dat$total_calls_American$dividend_yield[test_start:test_end])[row])$Price)
+  blackscholes_test[row] <- as.numeric(blackscholes(-1,S0=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],K=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],t=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],vola=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],divrate=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row])$Price)
 }
 
-x.grid_1 <- as.numeric(stan_dat$total_calls_American$forward_price_scaled[test_start:test_end])
-x.grid_2 <- as.numeric(stan_dat$total_calls_American$strike_price_scaled[test_start:test_end])
-x.grid_3 <- as.numeric(stan_dat$total_calls_American$impl_volatility_scaled[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_calls_American$time_to_exp_scaled[test_start:test_end])
-x.grid_5 <- as.numeric(stan_dat$total_calls_American$dividend_yield_scaled[test_start:test_end])
-x.grid_6 <- as.numeric(stan_dat$total_calls_American$interest_rate_scaled[test_start:test_end])
+x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
+# x2 <- x2_bs
 ```
 
 1-2: Predictions
@@ -83,7 +84,7 @@ x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 post_data_SGP_American <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2,N1=length(stan_dat$x[,1]),N2=length(x2[,1]), bs = blackscholes_test,variables = 6)
 # post_data
 
-pred_gp_SGP <- stan(file="Predictive GP_6dimension_withBS.stan", data=post_data_SGP_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+pred_gp_SGP <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_SGP_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 ```
 
 ##Part2:  Bdrycov Gaussian Process
@@ -92,7 +93,7 @@ pred_gp_SGP <- stan(file="Predictive GP_6dimension_withBS.stan", data=post_data_
 
 ```{r Fitting_Bdrycov,warning = FALSE}
 # Fitting GP model for Bdrycov
-fit_gp_Bdrycov_American <- stan(file="gp-fit-6dimension_withBS_Bdrycov.stan", data=stan_dat,
+fit_gp_Bdrycov_American <- stan(file="gp-fit-6dimension_withBS_Bdrycov_revised.stan", data=stan_dat,
                iter=100, chains=1);
 print(fit_gp_Bdrycov_American, pars = c('theta','sigma2','gamma2'))
 sum_gp_Bdrycov_American <- extract(fit_gp_Bdrycov_American,permuted=FALSE)
@@ -121,7 +122,7 @@ post_mean_mu_Bdrycov <- stan_dat$blackscholes
 post_data_Bdrycov_American <- list(theta=c(post_mean_theta_1_Bdrycov,post_mean_theta_2_Bdrycov,post_mean_theta_3_Bdrycov,post_mean_theta_4_Bdrycov,post_mean_theta_5_Bdrycov,post_mean_theta_6_Bdrycov),sigma2=post_mean_sigma2_Bdrycov,gamma2=post_mean_gamma2_Bdrycov,mu=post_mean_mu_Bdrycov,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2,N1=length(stan_dat$x[,1]),N2=length(x2[,1]), bs = blackscholes_test,variables = 6)
 # post_data
 
-pred_gp_Bdrycov <- stan(file="Predictive GP_6dimension_withBS_Bdrycov.stan", data=post_data_Bdrycov_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+pred_gp_Bdrycov <- stan(file="Predictive GP_6dimension_withBS_Bdrycov_revised.stan", data=post_data_Bdrycov_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 ```
 
 ##Part 3 Predictions Versus Truth
@@ -159,22 +160,22 @@ y_sd_values_Bdrycov <- pred_gp_sd_Bdrycov[1:(length(pred_gp_sd_Bdrycov)-1)]
 ```{r prediction accuracy}
 par(mfrow=c(1,3))
 #Plotting Standard GP
-plot(log(y_mean_values_SGP),log(stan_dat$total_calls_American$mid_price[test_start:test_end]),xlim = c(min(log(y_mean_values_SGP),na.rm = TRUE), max(log(y_mean_values_SGP),na.rm = TRUE)),ylim = c(min(log(stan_dat$total_calls_American$mid_price[test_start:test_end])), max(log(stan_dat$total_calls_American$mid_price[test_start:test_end])))) 
+plot(log(y_mean_values_SGP),log(stan_dat$total_puts_American$mid_price[test_start:test_end]),xlim = c(min(log(y_mean_values_SGP),na.rm = TRUE), max(log(y_mean_values_SGP),na.rm = TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end])))) 
 abline(0,1)
 
 #Plotting BDrycov
-plot(log(y_mean_values_Bdrycov),log(stan_dat$total_calls_American$mid_price[test_start:test_end]), xlim = c(min(log(y_mean_values_Bdrycov),na.rm=TRUE), max(log(y_mean_values_Bdrycov),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_calls_American$mid_price[test_start:test_end])), max(log(stan_dat$total_calls_American$mid_price[test_start:test_end]))))
+plot(log(y_mean_values_Bdrycov),log(stan_dat$total_puts_American$mid_price[test_start:test_end]), xlim = c(min(log(y_mean_values_Bdrycov),na.rm=TRUE), max(log(y_mean_values_Bdrycov),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end]))))
 abline(0,1)
 
 #Plotting Blackscholes
-plot(log(blackscholes_test),log(stan_dat$total_calls_American$mid_price[test_start:test_end]), xlim = c(min(log(blackscholes_test),na.rm=TRUE), max(log(blackscholes_test),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_calls_American$mid_price[test_start:test_end])), max(log(stan_dat$total_calls_American$mid_price[test_start:test_end]))))
+plot(log(blackscholes_test),log(stan_dat$total_puts_American$mid_price[test_start:test_end]), xlim = c(min(log(blackscholes_test),na.rm=TRUE), max(log(blackscholes_test),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end]))))
 abline(0,1)
 
 #MSE
 library('MLmetrics')
-MSE(y_mean_values_SGP,stan_dat$total_calls_American$mid_price[test_start:test_end])
-MSE(y_mean_values_Bdrycov,stan_dat$total_calls_American$mid_price[test_start:test_end])
-MSE(blackscholes_test,stan_dat$total_calls_American$mid_price[test_start:test_end])
+MSE(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(blackscholes_test,stan_dat$total_puts_American$mid_price[test_start:test_end])
 ```
 
 
@@ -184,26 +185,26 @@ MSE(blackscholes_test,stan_dat$total_calls_American$mid_price[test_start:test_en
 4-1: Contour Plots of Forward Price & Strike Price
 
 ```{r contour plots_forward_strike}
-x.grid_1_cont <- as.numeric(stan_dat$total_calls_American$forward_price_scaled[test_start:test_end])
-x.grid_2_cont <- as.numeric(stan_dat$total_calls_American$strike_price_scaled[test_start:test_end])
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
 
 dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
 dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
-x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-x.grid_1_cont_bs <- as.numeric(stan_dat$total_calls_American$forward_price[test_start:test_end])
-x.grid_2_cont_bs <- as.numeric(stan_dat$total_calls_American$strike_price[test_start:test_end])
-x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$impl_volatility[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$time_to_exp[test_start:test_end])),nrow(X.grid))
-x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$dividend_yield[test_start:test_end])),nrow(X.grid))
-x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$interest_rate[test_start:test_end])),nrow(X.grid))
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
 dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
 dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
@@ -213,7 +214,7 @@ x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs
 
 blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
 for (row in 1:nrow(data.frame(x2_cont_bs))){
-  blackscholes_test_cont[row] <- as.numeric(blackscholes(1,S0=x2_cont_bs[row,1],K=x2_cont_bs[row,2],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,5])$Price)
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,1],K=x2_cont_bs[row,2],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,5])$Price)
 }
 
 post_data_cont_SGP <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
@@ -267,26 +268,26 @@ points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 4-2: Contour Plots of Implied VOlatility & Time to Expiration
 
 ```{r}
-x.grid_1_cont <- as.numeric(stan_dat$total_calls_American$impl_volatility_scaled[test_start:test_end])
-x.grid_2_cont <- as.numeric(stan_dat$total_calls_American$time_to_exp_scaled[test_start:test_end])
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
 
 dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
 dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
-x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-x.grid_1_cont_bs <- as.numeric(stan_dat$total_calls_American$impl_volatility[test_start:test_end])
-x.grid_2_cont_bs <- as.numeric(stan_dat$total_calls_American$time_to_exp[test_start:test_end])
-x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$forward_price[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$strike_price[test_start:test_end])),nrow(X.grid))
-x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$dividend_yield[test_start:test_end])),nrow(X.grid))
-x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$interest_rate[test_start:test_end])),nrow(X.grid))
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
 dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
 dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
@@ -296,7 +297,7 @@ x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs
 
 blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
 for (row in 1:nrow(data.frame(x2_cont_bs))){
-  blackscholes_test_cont[row] <- as.numeric(blackscholes(1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,4],r=x2_cont_bs[row,6],t=x2_cont_bs[row,2],vola=x2_cont_bs[row,1],divrate=x2_cont_bs[row,5])$Price)
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,4],r=x2_cont_bs[row,6],t=x2_cont_bs[row,2],vola=x2_cont_bs[row,1],divrate=x2_cont_bs[row,5])$Price)
 }
 
 
@@ -351,26 +352,26 @@ points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 4-3: Contour Plots of Interest Rate & Dividend Yield
 
 ```{r contour plots_rates_time}
-x.grid_1_cont <- as.numeric(stan_dat$total_calls_American$dividend_yield_scaled[test_start:test_end])
-x.grid_2_cont <- as.numeric(stan_dat$total_calls_American$interest_rate_scaled[test_start:test_end])
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])
 
 dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
 dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
-x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_calls_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-x.grid_1_cont_bs <- as.numeric(stan_dat$total_calls_American$dividend_yield[test_start:test_end])
-x.grid_2_cont_bs <- as.numeric(stan_dat$total_calls_American$interest_rate[test_start:test_end])
-x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$impl_volatility[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$time_to_exp[test_start:test_end])),nrow(X.grid))
-x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$forward_price[test_start:test_end])),nrow(X.grid))
-x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_calls_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
 
 dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
 dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
@@ -380,7 +381,7 @@ x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs
 
 blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
 for (row in 1:nrow(data.frame(x2_cont_bs))){
-  blackscholes_test_cont[row] <- as.numeric(blackscholes(1,S0=x2_cont_bs[row,5],K=x2_cont_bs[row,6],r=x2_cont_bs[row,2],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,1])$Price)
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,5],K=x2_cont_bs[row,6],r=x2_cont_bs[row,2],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,1])$Price)
 }
 
 
@@ -462,19 +463,19 @@ post_mean_mu_SGP <- stan_dat_European$blackscholes
 ```
 
 ```{r Blackscholes and assigning test data -2}
-x2_bs <- cbind(as.numeric(stan_dat$total_calls_American$forward_price[test_start:test_end]),as.numeric(stan_dat$total_calls_American$strike_price[test_start:test_end]),as.numeric(stan_dat$total_calls_American$impl_volatility[test_start:test_end]),as.numeric(stan_dat$total_calls_American$time_to_exp[test_start:test_end]),x.grid_5 <- as.numeric(stan_dat$total_calls_American$dividend_yield[test_start:test_end]),as.numeric(stan_dat$total_calls_American$interest_rate[test_start:test_end]))
+x2_bs <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end]),as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end]),x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end]),as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end]))
 
 blackscholes_test <- rep(NA,length(x2_bs[,1]))
 for (row in 1:nrow(data.frame(x2_bs))){
-  blackscholes_test[row] <- as.numeric(blackscholes(1,S0=as.numeric(stan_dat$total_calls_American$forward_price[test_start:test_end])[row],K=as.numeric(stan_dat$total_calls_American$strike_price[test_start:test_end])[row],r=as.numeric(stan_dat$total_calls_American$interest_rate[test_start:test_end])[row],t=as.numeric(stan_dat$total_calls_American$time_to_exp[test_start:test_end])[row],vola=as.numeric(stan_dat$total_calls_American$impl_volatility[test_start:test_end])[row],divrate=as.numeric(stan_dat$total_calls_American$dividend_yield[test_start:test_end])[row])$Price)
+  blackscholes_test[row] <- as.numeric(blackscholes(-1,S0=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],K=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],t=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],vola=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],divrate=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row])$Price)
 }
 
-x.grid_1 <- as.numeric(stan_dat$total_calls_American$forward_price_scaled[test_start:test_end])
-x.grid_2 <- as.numeric(stan_dat$total_calls_American$strike_price_scaled[test_start:test_end])
-x.grid_3 <- as.numeric(stan_dat$total_calls_American$impl_volatility_scaled[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_calls_American$time_to_exp_scaled[test_start:test_end])
-x.grid_5 <- as.numeric(stan_dat$total_calls_American$dividend_yield_scaled[test_start:test_end])
-x.grid_6 <- as.numeric(stan_dat$total_calls_American$interest_rate_scaled[test_start:test_end])
+x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
+x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])
+x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])
 x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
 
 ```
@@ -505,27 +506,27 @@ y_sd_values_Bdrycov_disc <- pred_gp_sd_Bdrycov_disc[1:(length(pred_gp_sd_Bdrycov
 ```{r prediction accuracy_disc-1}
 par(mfrow=c(1,4))
 #Plotting Standard GP
-plot(log(y_mean_values_SGP),log(stan_dat$total_calls_American$mid_price[test_start:test_end]),xlim = c(min(log(y_mean_values_SGP),na.rm = TRUE), max(log(y_mean_values_SGP),na.rm = TRUE)),ylim = c(min(log(stan_dat$total_calls_American$mid_price[test_start:test_end])), max(log(stan_dat$total_calls_American$mid_price[test_start:test_end])))) 
+plot(log(y_mean_values_SGP),log(stan_dat$total_puts_American$mid_price[test_start:test_end]),xlim = c(min(log(y_mean_values_SGP),na.rm = TRUE), max(log(y_mean_values_SGP),na.rm = TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end])))) 
 abline(0,1)
 
 #Plotting BDrycov
-plot(log(y_mean_values_Bdrycov),log(stan_dat$total_calls_American$mid_price[test_start:test_end]), xlim = c(min(log(y_mean_values_Bdrycov),na.rm=TRUE), max(log(y_mean_values_Bdrycov),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_calls_American$mid_price[test_start:test_end])), max(log(stan_dat$total_calls_American$mid_price[test_start:test_end]))))
+plot(log(y_mean_values_Bdrycov),log(stan_dat$total_puts_American$mid_price[test_start:test_end]), xlim = c(min(log(y_mean_values_Bdrycov),na.rm=TRUE), max(log(y_mean_values_Bdrycov),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end]))))
 abline(0,1)
 
 #Plotting Blackscholes
-plot(log(blackscholes_test),log(stan_dat$total_calls_American$mid_price[test_start:test_end]), xlim = c(min(log(blackscholes_test),na.rm=TRUE), max(log(blackscholes_test),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_calls_American$mid_price[test_start:test_end])), max(log(stan_dat$total_calls_American$mid_price[test_start:test_end]))))
+plot(log(blackscholes_test),log(stan_dat$total_puts_American$mid_price[test_start:test_end]), xlim = c(min(log(blackscholes_test),na.rm=TRUE), max(log(blackscholes_test),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end]))))
 abline(0,1)
 
 
 #Plotting Discrepancy Model
-plot(log(y_mean_values_Bdrycov_disc),log(stan_dat$total_calls_American$mid_price[test_start:test_end]), xlim = c(min(log(y_mean_values_Bdrycov_disc),na.rm=TRUE), max(log(y_mean_values_Bdrycov_disc),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_calls_American$mid_price[test_start:test_end])), max(log(stan_dat$total_calls_American$mid_price[test_start:test_end]))))
+plot(log(y_mean_values_Bdrycov_disc),log(stan_dat$total_puts_American$mid_price[test_start:test_end]), xlim = c(min(log(y_mean_values_Bdrycov_disc),na.rm=TRUE), max(log(y_mean_values_Bdrycov_disc),na.rm=TRUE)),ylim = c(min(log(stan_dat$total_puts_American$mid_price[test_start:test_end])), max(log(stan_dat$total_puts_American$mid_price[test_start:test_end]))))
 abline(0,1)
 
 #MSE
 library('MLmetrics')
-MSE(y_mean_values_SGP,stan_dat$total_calls_American$mid_price[test_start:test_end])
-MSE(y_mean_values_Bdrycov,stan_dat$total_calls_American$mid_price[test_start:test_end])
-MSE(blackscholes_test,stan_dat$total_calls_American$mid_price[test_start:test_end])
-MSE(y_mean_values_Bdrycov_disc,stan_dat$total_calls_American$mid_price[test_start:test_end])
+MSE(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(blackscholes_test,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_Bdrycov_disc,stan_dat$total_puts_American$mid_price[test_start:test_end])
 
 ```

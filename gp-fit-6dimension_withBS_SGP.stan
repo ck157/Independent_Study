@@ -28,18 +28,21 @@ model {
   for (i in 1:N) {
     K[i, i] = gamma2 + sigma2; //diagonal
     for (j in (i+1):N) { //off-diagonals
-      K[i, j] = gamma2*exp(-dot_product(theta,square(x[i,] - x[j,])));
-      K[j, i] = K[i, j];
+      K[i,j] = gamma2;
+      for (l in 1:variables){
+        K[i, j] = K[i,j]*exp(-1/(2*square(theta[l]))*square(x[i,l] - x[j,l]));
+        K[j, i] = K[i, j];
+      }
     }
   }
   L_K = cholesky_decompose(K); //intermediate step for efficient inverse
   
   // priors
   for (v in 1:variables) {
-    theta[v] ~ inv_gamma(1,1);
+    theta[v] ~ inv_gamma(0.1,0.1);
   }
-  sigma2 ~ inv_gamma(0.01,0.01);
-  gamma2 ~ inv_gamma(0.01,0.01);
+  sigma2 ~ inv_gamma(0.1,0.1);
+  gamma2 ~ inv_gamma(0.1,0.1);
   // mu ~ normal(0,1000);
   
   // sampling model

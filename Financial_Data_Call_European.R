@@ -15,11 +15,11 @@ total_calls_European <- total_calls %>%
 
 total_calls_European <- total_calls_European[(total_calls_European$time_to_exp<=3.712 & total_calls_European$time_to_exp >= 0.776), ]
 
-training_start <- 1 #06/03
-training_end <- 236 #06/07
+# training_start <- 1 #06/03
+# training_end <- 236 #06/07
 
-# training_start <- 237 #06/10
-# training_end <- 378 #06/14
+training_start <- 237 #06/10
+training_end <- 378 #06/14
 
 N <- training_end - training_start + 1
 
@@ -53,10 +53,10 @@ total_calls_European$interest_rate_scaled <- range01(total_calls_European$intere
 
 x_1 <- as.numeric(total_calls_European$forward_price_scaled[training_start:training_end])
 x_2 <- as.numeric(total_calls_European$strike_price_scaled[training_start:training_end])
-x_3 <- as.numeric(total_calls_European$impl_volatility_scaled[training_start:training_end])
-x_4 <- as.numeric(total_calls_European$time_to_exp_scaled[training_start:training_end])
-x_5 <- as.numeric(total_calls_European$dividend_yield_scaled[training_start:training_end])
-x_6 <- as.numeric(total_calls_European$interest_rate_scaled[training_start:training_end])
+x_3 <- as.numeric(total_calls_European$impl_volatility[training_start:training_end])
+x_4 <- as.numeric(total_calls_European$time_to_exp[training_start:training_end])
+x_5 <- as.numeric(total_calls_European$dividend_yield[training_start:training_end])
+x_6 <- as.numeric(total_calls_European$interest_rate[training_start:training_end])
 
 x <- cbind(x_1,x_2,x_3,x_4,x_5,x_6)
 

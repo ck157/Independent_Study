@@ -20,26 +20,30 @@ model {
   matrix[N, N] K;
   vector[N] muvec;
   muvec = blackscholes;
-  #For Loop to go through matrix of x and compute black-scholes
+  //For Loop to go through matrix of x and compute black-scholes
   
   
   
   // defining our custom covariance matrix
   for (i in 1:N) {
-    K[i, i] = gamma2 + sigma2; //diagonal
-    for (j in (i+1):N) { //off-diagonals
-      K[i, j] = gamma2*exp(-dot_product(theta,square(x[i,] - x[j,])));
-      K[j, i] = K[i, j];
+    K[i, i] = gamma2 + sigma2 + 1e-7; //diagonal
+    for (j in (i+1):N) { //off
+      K[i,j] = gamma2;
+      for (l in 1:variables){
+        K[i, j] = K[i,j]*(2*fmin(x[i,l],x[j,l])/theta[l] + (exp(-theta[l]*x[i,l])+exp(-theta[l]*x[j,l])-exp(-theta[l]*fabs(x[i,l]-x[j,l]))-1)/square(theta[l]));
+        // K[i, j] = gamma2*exp(-dot_product(theta,square(x[i,] - x[j,])));
+        K[j, i] = K[i, j];
+      }
     }
   }
   L_K = cholesky_decompose(K); //intermediate step for efficient inverse
   
   // priors
   for (v in 1:variables) {
-    theta[v] ~ inv_gamma(1,1);
+    theta[v] ~ inv_gamma(0.1,0.1);
   }
-  sigma2 ~ inv_gamma(0.01,0.01);
-  gamma2 ~ inv_gamma(0.01,0.01);
+  sigma2 ~ inv_gamma(0.1,0.1);
+  gamma2 ~ inv_gamma(0.1,0.1);
   // mu ~ normal(0,1000);
   
   // sampling model

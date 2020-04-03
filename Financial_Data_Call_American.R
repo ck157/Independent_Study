@@ -11,15 +11,15 @@ total_calls$strike_price <- total_calls$strike_price/1000
 
 total_calls_American <- total_calls %>% 
   filter(str_detect(exercise_style,"A")) %>% 
-  filter(volume > 50)
+  filter(volume > 10)
 
 total_calls_American <- total_calls_American[(total_calls_American$time_to_exp<=3.712 & total_calls_American$time_to_exp >= 0.776), ]
 
 training_start <- 1 #06/03
-training_end <- 268 #06/07
+training_end <- 608 #06/07
 
-# training_start <- 269 #06/10
-# training_end <- 432 #06/14
+# training_start <- 609 #06/10
+# training_end <- 999 #06/14
 
 N <- training_end - training_start + 1
 
@@ -53,12 +53,14 @@ total_calls_American$interest_rate_scaled <- range01(total_calls_American$intere
 
 x_1 <- as.numeric(total_calls_American$forward_price_scaled[training_start:training_end])
 x_2 <- as.numeric(total_calls_American$strike_price_scaled[training_start:training_end])
-x_3 <- as.numeric(total_calls_American$impl_volatility_scaled[training_start:training_end])
+x_3 <- as.numeric(total_calls_American$impl_volatility[training_start:training_end])
 x_4 <- as.numeric(total_calls_American$time_to_exp_scaled[training_start:training_end])
-x_5 <- as.numeric(total_calls_American$dividend_yield_scaled[training_start:training_end])
-x_6 <- as.numeric(total_calls_American$interest_rate_scaled[training_start:training_end])
+x_5 <- as.numeric(total_calls_American$dividend_yield[training_start:training_end])
+x_6 <- as.numeric(total_calls_American$interest_rate[training_start:training_end])
 
 x <- cbind(x_1,x_2,x_3,x_4,x_5,x_6)
+
+
 
 
 y <- as.numeric(total_calls_American$mid_price[training_start:training_end])
