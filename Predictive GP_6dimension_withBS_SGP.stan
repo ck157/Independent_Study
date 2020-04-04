@@ -23,12 +23,13 @@ functions {
         for (j in (i+1):N1) { //off-diagonals      
           K[i,j] = gamma2;
           for (l in 1:variables){
-            K[i, j] = K[i,j]*exp(-1/(2*square(theta[l]))*square(x_train[i,l] - x_train[j,l]));
+            K[i, j] = K[i,j]*exp(-theta[l]*square(x_train[i,l] - x_train[j,l]));
             K[j, i] = K[i, j];
           }
         }  
       }   
       L_K = cholesky_decompose(K);
+      
       
       mu_vec1 = mu; #Needs to be changed with Black Shocles
       mu_vec2 = bs; #Needs to be changed with Black Shocles
@@ -40,7 +41,7 @@ functions {
         for (j in 1:N2) { //off-diagonals
           k_x1_x2[i,j]=gamma2;
           for (l in 1:variables){
-          k_x1_x2[i, j] = k_x1_x2[i,j]*exp(-1/(2*square(theta[l]))*square(x_train[i,l] - x_test[j,l]));
+          k_x1_x2[i, j] = k_x1_x2[i,j]*exp(-theta[l]*square(x_train[i,l] - x_test[j,l]));
           }
         }  
       }   
@@ -53,7 +54,7 @@ functions {
         for (j in (i+1):N2) { //off-diagonals
           K2[i,j]=gamma2;
           for (l in 1:variables){
-            K2[i, j] = K2[i,j]*exp(-1/(2*square(theta[l]))*square(x_test[i,l] - x_test[j,l]));
+            K2[i, j] = K2[i,j]*exp(-theta[l]*square(x_test[i,l] - x_test[j,l]));
             K2[j, i] = K2[i, j];
           }
         }  

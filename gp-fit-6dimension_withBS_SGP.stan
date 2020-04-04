@@ -10,11 +10,8 @@ parameters {
   vector<lower=0>[variables] theta;
   real<lower=0> sigma2;
   real<lower=0> gamma2;
-//   real mu;
 }
-// transformed parameters{
-//   vector[N] muvec = rep_vector(mu, N);
-// }
+
 model {
   matrix[N, N] L_K;
   matrix[N, N] K;
@@ -30,7 +27,7 @@ model {
     for (j in (i+1):N) { //off-diagonals
       K[i,j] = gamma2;
       for (l in 1:variables){
-        K[i, j] = K[i,j]*exp(-1/(2*square(theta[l]))*square(x[i,l] - x[j,l]));
+        K[i, j] = K[i,j]*exp(-theta[l]*square(x[i,l] - x[j,l]));
         K[j, i] = K[i, j];
       }
     }
@@ -43,7 +40,6 @@ model {
   }
   sigma2 ~ inv_gamma(0.1,0.1);
   gamma2 ~ inv_gamma(0.1,0.1);
-  // mu ~ normal(0,1000);
   
   // sampling model
   y ~ multi_normal_cholesky(muvec, L_K);

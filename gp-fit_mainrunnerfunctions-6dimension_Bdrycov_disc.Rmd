@@ -40,7 +40,9 @@ post_mean_theta_5_SGP <- mean(sum_gp_SGP_American[,1,5]) #theta
 post_mean_theta_6_SGP <- mean(sum_gp_SGP_American[,1,6]) #theta
 post_mean_sigma2_SGP <- mean(sum_gp_SGP_American[,1,7]) #sigma2
 post_mean_gamma2_SGP <- mean(sum_gp_SGP_American[,1,8]) #gamma2
-post_mean_mu_SGP <- stan_dat$blackscholes
+# post_mean_mu_SGP <- stan_dat$blackscholes
+post_mean_mu_SGP <- mean(sum_gp_SGP_American[,1,9])
+
 
 ```
 
@@ -67,13 +69,13 @@ for (row in 1:nrow(data.frame(x2_bs))){
   blackscholes_test[row] <- as.numeric(blackscholes(-1,S0=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],K=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],t=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],vola=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],divrate=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row])$Price)
 }
 
-x.grid_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
-x.grid_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
-x.grid_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
-x.grid_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
-x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])
-x.grid_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
-x2 <- cbind(x.grid_1,x.grid_2,x.grid_3,x.grid_4,x.grid_5,x.grid_6)
+x_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
+x_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])
+x_6 <- as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])
+x2 <- cbind(x_1,x_2,x_3,x_4,x_5,x_6)
 # x2 <- x2_bs
 ```
 
