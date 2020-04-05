@@ -52,10 +52,10 @@ total_puts_American$interest_rate_scaled <- range01(total_puts_American$interest
 
 x_1 <- as.numeric(total_puts_American$forward_price_scaled[training_start:training_end])
 x_2 <- as.numeric(total_puts_American$strike_price_scaled[training_start:training_end])
-x_3 <- as.numeric(total_puts_American$impl_volatility[training_start:training_end])
+x_3 <- as.numeric(total_puts_American$impl_volatility_scaled[training_start:training_end])
 x_4 <- as.numeric(total_puts_American$time_to_exp_scaled[training_start:training_end])
-x_5 <- as.numeric(total_puts_American$dividend_yield[training_start:training_end])
-x_6 <- as.numeric(total_puts_American$interest_rate[training_start:training_end])
+x_5 <- as.numeric(total_puts_American$dividend_yield_scaled[training_start:training_end])
+x_6 <- as.numeric(total_puts_American$interest_rate_scaled[training_start:training_end])
 
 x <- cbind(x_1,x_2,x_3,x_4,x_5,x_6)
 
