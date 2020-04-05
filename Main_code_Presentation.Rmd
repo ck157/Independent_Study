@@ -315,10 +315,10 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Standard Deviation in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
@@ -333,19 +333,20 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BS_GP Means in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BS_GP Standard Deviation in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex = 1)
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex = 1, main = "Black-Scholes Means in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Standard Deviation in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+
 ```
 
 4-2: Contour Plots of Implied Volatility & Time to Expiration
@@ -407,10 +408,10 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
@@ -425,18 +426,18 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
@@ -499,10 +500,10 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
@@ -517,18 +518,18 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1)
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
@@ -568,6 +569,215 @@ mean(0)
 
 ```{r}
 Discrepancy <- y_mean_values_bs - blackscholes_test
+
+library('MLmetrics')
+Discrepnacy_0610 <- mean(Discrepancy[1:71])
+Discrepancy_0611 <- mean(Discrepancy[72:143])
+Discrepancy_0612 <- mean(Discrepancy[144:164])
+Discrepancy_0613 <- mean(Discrepancy[165:200])
+Discrepancy_0614 <- mean(Discrepancy[201:237])
+Discrepancy_data <- as.data.frame(rbind(SGP_MSE_0610,SGP_MSE_0611,SGP_MSE_0612,SGP_MSE_0613,SGP_MSE_0614))
+
+Discrepancy_data$date <- c(as.Date('00/00/0000', format = '%m/%d/%Y'))
+Discrepancy_data$date[1] <- as.Date('06/10/2019', format = '%m/%d/%Y')
+Discrepancy_data$date[2] <- as.Date('06/11/2019', format = '%m/%d/%Y')
+Discrepancy_data$date[3] <- as.Date('06/12/2019', format = '%m/%d/%Y')
+Discrepancy_data$date[4] <- as.Date('06/13/2019', format = '%m/%d/%Y')
+Discrepancy_data$date[5] <- as.Date('06/14/2019', format = '%m/%d/%Y')
+
+Discrepancy_data <- Discrepancy_data %>% 
+  rename(Discrepancy_values = V1)
+  
+plot(Discrepancy, main = "Plotting Discrepancy Between BSGP and Black-Scholes", xlab = "Plot Points", ylab = "Discrepancy in $")
+
+#Plotting Blackscholes
+ggplot(data=Discrepancy_data, mapping=aes(x=date, y=Discrepancy_values)) +
+  geom_point(size = 2) +
+  geom_line() +
+  labs(title = "Plotting Mean Discrepancy Across Time",
+       x = "Date",
+       y = "Discrepancy in $") +
+  theme_bw() +
+  theme(text=element_text(size=16))
 ```
 
+```{r}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
+
+x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,1],K=x2_cont_bs[row,2],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,5])$Price)
+}
+
+post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
+
+
+# post_data
+
+
+pred_gp_cont_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+
+
+#Computing Mean
+y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
+y_mean_values_cont_bs <- c(colMeans(y_predict_values_cont_bs))
+y_mean_values_cont_bs <- y_mean_values_cont_bs[1:(length(y_mean_values_cont_bs)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
+pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
+y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
+
+#Discrepancy
+Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeled in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+```
+
+```{r}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
+
+x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,4],r=x2_cont_bs[row,6],t=x2_cont_bs[row,2],vola=x2_cont_bs[row,1],divrate=x2_cont_bs[row,5])$Price)
+}
+
+
+post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
+
+
+# post_data
+
+pred_gp_cont_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+#Computing Mean
+y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
+y_mean_values_cont_bs <- c(colMeans(y_predict_values_cont_bs))
+y_mean_values_cont_bs <- y_mean_values_cont_bs[1:(length(y_mean_values_cont_bs)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
+pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
+y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
+
+#Discrepancy
+Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Impl_vol & Time_to_Exp)", xlab= "Forward Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+```
+
+```{r}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
+
+x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,1],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,2],divrate=x2_cont_bs[row,5])$Price)
+}
+
+
+post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
+
+
+# post_data
+
+pred_gp_cont_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+#Computing Mean
+y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
+y_mean_values_cont_bs <- c(colMeans(y_predict_values_cont_bs))
+y_mean_values_cont_bs <- y_mean_values_cont_bs[1:(length(y_mean_values_cont_bs)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
+pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
+y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
+
+#Discrepancy
+Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Strike Price & Impl_vol)", xlab= "Forward Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+```
 
