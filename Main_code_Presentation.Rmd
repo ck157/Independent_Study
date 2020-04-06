@@ -729,7 +729,7 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Impl_vol & Time_to_Exp)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
@@ -790,7 +790,7 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Strike Price & Impl_vol)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
