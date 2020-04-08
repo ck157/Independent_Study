@@ -318,10 +318,10 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Standard Deviation in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
@@ -336,18 +336,18 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BS_GP Means in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BS_GP Standard Deviation in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex = 1, main = "Black-Scholes Means in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex = 2, main = "Black-Scholes Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Standard Deviation in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 ```
@@ -411,10 +411,10 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
@@ -429,18 +429,18 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
@@ -503,10 +503,10 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1, main = "SGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
@@ -521,18 +521,18 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1, main = "BSGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
@@ -668,11 +668,11 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeled in 2D (Forward Price & Strike Price)", xlab= "Forward Price", ylab="Strike Price")
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1.5, main = "Discrepancy Modeled in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
-7-3: Discrepancy Contour Plots of Forward Price & Strike Price 
+7-3: Discrepancy Contour Plots of Implied Volatility & Time to Expiration
 
 ```{r}
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
@@ -729,11 +729,11 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1.5, main = "Discrepancy Modeling in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
-7-4: Discrepancy Contour Plots of Forward Price & Strike Price
+7-4: Discrepancy Contour Plots of Strike Price & Implied Volatility
 
 ```{r}
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
@@ -790,7 +790,7 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1, main = "Discrepancy Modeling in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1.5, main = "Discrepancy Modeling in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
