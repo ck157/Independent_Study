@@ -794,11 +794,11 @@ contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), la
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
-##Part 8: Aritifical Neural Networks
+##Part 8: Other Machine Learning Methods
 
-1-1: Fitting
+8-1: Fitting ANN
 
-```{r Fitting_SGP, warning = FALSE}
+```{r Fitting_ANN}
 library(rstan)
 source("gp.utility.R")
 library(neuralnet)
@@ -807,6 +807,148 @@ library(neuralnet)
 stan_dat <- read_rdump('Financial_Data_Put_American.R')
 train <- data.frame(stan_dat$train)
 n <- names(data.frame(stan_dat$train))
-nn <- neuralnet(y ~ x_1 + x_2 + x_3 + x_4 + x_5 + x_6, data=train, hidden=c(2,1),linear.output=TRUE ,threshold=0.01)
-nn$result.matrix
+nn <- neuralnet(y_scaled ~ x_1 + x_2 + x_3 + x_4 + x_5 + x_6, data=train, hidden=c(2,1),linear.output=TRUE ,threshold=0.01)
+plot(nn)
 ```
+
+8-2: Testing ANN
+
+```{r Testing_ANN}
+#Testing
+test_start <- 323 #06/10 Puts
+test_end <- 559 #06/14 Puts
+
+# test_start <- 560 #06/17 Puts
+# test_end <- 852 #06/20 Puts
+
+# test_start <- 609 #06/10 Calls
+# test_end <- 999 #06/14 Calls
+
+# test_start <- 433 #06/17 Calls
+# test_end <- 700 #06/20 Calls
+
+x_1 <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x_2 <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x_3 <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+x_4 <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
+x_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])
+x_6 <- as.numeric(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])
+y_scaled <- as.numeric(stan_dat$total_puts_American$mid_price_scaled[test_start:test_end])
+test <- data.frame(cbind(x_1,x_2,x_3,x_4,x_5,x_6,y_scaled))
+
+
+predict_testNN <- neuralnet::compute(nn, test[,c(1:6)])
+predict_testNN <- (predict_testNN$net.result * (max(stan_dat$total_puts_American$mid_price[test_start:test_end]) - min(stan_dat$total_puts_American$mid_price[test_start:test_end]))) + min(stan_dat$total_puts_American$mid_price[test_start:test_end])
+plot(stan_dat$total_puts_American$mid_price[test_start:test_end], predict_testNN, col='blue', pch=16, ylab = "predicted price NN", xlab = "real price")
+abline(0,1)
+
+
+MSE(predict_testNN,stan_dat$total_puts_American$mid_price[test_start:test_end])
+```
+
+8-3 Fitting & Testing Bagging
+
+```{r Fitting_Random Forest}
+#Bagging
+library(tree)
+library(randomForest)
+
+bagging <- randomForest(y_scaled~., data = train, mtry = 6, importance = TRUE)
+bagging
+
+yhat.bag <- predict(bagging, newdata = test)
+yhat.bag <- (yhat.bag * (max(stan_dat$total_puts_American$mid_price[test_start:test_end]) - min(stan_dat$total_puts_American$mid_price[test_start:test_end]))) + min(stan_dat$total_puts_American$mid_price[test_start:test_end])
+plot(yhat.bag, stan_dat$total_puts_American$mid_price[test_start:test_end])
+abline(0,1)
+mean((yhat.bag - stan_dat$total_puts_American$mid_price[test_start:test_end])^2)
+
+
+#Random Forest
+rf <- randomForest(y_scaled~., data = train, mtry = 2, importance = TRUE)
+yhat.rf <- predict(rf, newdata = test)
+yhat.rf <- (yhat.rf * (max(stan_dat$total_puts_American$mid_price[test_start:test_end]) - min(stan_dat$total_puts_American$mid_price[test_start:test_end]))) + min(stan_dat$total_puts_American$mid_price[test_start:test_end])
+plot(yhat.rf, stan_dat$total_puts_American$mid_price[test_start:test_end])
+abline(0,1)
+mean((yhat.rf - stan_dat$total_puts_American$mid_price[test_start:test_end])^2)
+```
+
+8-4 Summary of Other Machine Learning Methods
+
+```{r}
+par(mfrow=c(2,3))
+#Plotting Standard GP
+ggplot(mapping=aes(x=log(y_mean_values_SGP),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - SGP",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16)) +
+  geom_abline(intercept = 0, slope = 1)
+
+#Plotting bs
+ggplot(mapping=aes(x=log(y_mean_values_bs),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
+
+
+#Plotting Blackscholes
+ggplot(mapping=aes(x=log(blackscholes_test),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
+
+#Plotting Artificial Neural Networks
+ggplot(mapping=aes(x=log(predict_testNN),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - SGP",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16)) +
+  geom_abline(intercept = 0, slope = 1)
+
+#Plotting Bagging
+ggplot(mapping=aes(x=log(yhat.bag),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - SGP",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16)) +
+  geom_abline(intercept = 0, slope = 1)
+
+#Plotting Random Forest
+ggplot(mapping=aes(x=log(yhat.rf),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - SGP",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16)) +
+  geom_abline(intercept = 0, slope = 1)
+
+#MSE
+library('MLmetrics')
+MSE(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(y_mean_values_bs,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(blackscholes_test,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(predict_testNN,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(yhat.bag,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(yhat.rf,stan_dat$total_puts_American$mid_price[test_start:test_end])
+
+
+```
+
+
+
+
