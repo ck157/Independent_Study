@@ -910,7 +910,7 @@ ggplot(mapping=aes(x=log(blackscholes_test),y=log(stan_dat$total_puts_American$m
 #Plotting Artificial Neural Networks
 ggplot(mapping=aes(x=log(predict_testNN),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
   geom_point() +
-  labs(title = "Predicted vs Data - SGP",
+  labs(title = "Predicted vs Data - Neural Network",
        x = "Predicted Option Price",
        y = "Observed Option Price") +
   theme_bw() +
@@ -920,7 +920,7 @@ ggplot(mapping=aes(x=log(predict_testNN),y=log(stan_dat$total_puts_American$mid_
 #Plotting Bagging
 ggplot(mapping=aes(x=log(yhat.bag),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
   geom_point() +
-  labs(title = "Predicted vs Data - SGP",
+  labs(title = "Predicted vs Data - Bagging",
        x = "Predicted Option Price",
        y = "Observed Option Price") +
   theme_bw() +
@@ -930,7 +930,7 @@ ggplot(mapping=aes(x=log(yhat.bag),y=log(stan_dat$total_puts_American$mid_price[
 #Plotting Random Forest
 ggplot(mapping=aes(x=log(yhat.rf),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
   geom_point() +
-  labs(title = "Predicted vs Data - SGP",
+  labs(title = "Predicted vs Data - Random Forest",
        x = "Predicted Option Price",
        y = "Observed Option Price") +
   theme_bw() +
