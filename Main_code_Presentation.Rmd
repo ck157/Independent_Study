@@ -874,7 +874,7 @@ mean((yhat.rf - stan_dat$total_puts_American$mid_price[test_start:test_end])^2)
 
 8-4 Summary of Other Machine Learning Methods
 
-```{r}
+```{r summary of results for all methods}
 par(mfrow=c(2,3))
 #Plotting Standard GP
 ggplot(mapping=aes(x=log(y_mean_values_SGP),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
