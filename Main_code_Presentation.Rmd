@@ -794,3 +794,19 @@ contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), la
 points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
+##Part 8: Aritifical Neural Networks
+
+1-1: Fitting
+
+```{r Fitting_SGP, warning = FALSE}
+library(rstan)
+source("gp.utility.R")
+library(neuralnet)
+
+# Fitting ANN model
+stan_dat <- read_rdump('Financial_Data_Put_American.R')
+train <- data.frame(stan_dat$train)
+n <- names(data.frame(stan_dat$train))
+nn <- neuralnet(y ~ x_1 + x_2 + x_3 + x_4 + x_5 + x_6, data=train, hidden=c(2,1),linear.output=TRUE ,threshold=0.01)
+nn$result.matrix
+```
