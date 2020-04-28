@@ -872,7 +872,25 @@ abline(0,1)
 mean((yhat.rf - stan_dat$total_puts_American$mid_price[test_start:test_end])^2)
 ```
 
-8-4 Summary of Other Machine Learning Methods
+8-4 Fitting & Testing Binomial Option Trees
+
+```{r}
+library(derivmkts)
+
+x2_bs <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end]),as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end]),as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end]),x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end]),as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end]))
+
+binom_test <- rep(NA,length(x2_bs[,1]))
+for (row in 1:nrow(data.frame(x2_bs))){
+  binom_test[row] <- binomopt(s=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],k=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],v=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],tt=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],d=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row], nstep = 1000, american=TRUE, putopt=TRUE)
+}
+
+plot(binom_test, stan_dat$total_puts_American$mid_price[test_start:test_end])
+abline(0,1)
+mean((binom_test - stan_dat$total_puts_American$mid_price[test_start:test_end])^2)
+```
+
+
+8-5 Summary of Other Machine Learning Methods
 
 ```{r summary of results for all methods}
 par(mfrow=c(2,3))
@@ -937,6 +955,16 @@ ggplot(mapping=aes(x=log(yhat.rf),y=log(stan_dat$total_puts_American$mid_price[t
   theme(text=element_text(size=16)) +
   geom_abline(intercept = 0, slope = 1)
 
+#Plotting Binomial Option Tree
+ggplot(mapping=aes(x=log(binom_test),y=log(stan_dat$total_puts_American$mid_price[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - Binomial Option Tree",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16)) +
+  geom_abline(intercept = 0, slope = 1)
+
 #MSE
 library('MLmetrics')
 MSE(y_mean_values_SGP,stan_dat$total_puts_American$mid_price[test_start:test_end])
@@ -945,6 +973,7 @@ MSE(blackscholes_test,stan_dat$total_puts_American$mid_price[test_start:test_end
 MSE(predict_testNN,stan_dat$total_puts_American$mid_price[test_start:test_end])
 MSE(yhat.bag,stan_dat$total_puts_American$mid_price[test_start:test_end])
 MSE(yhat.rf,stan_dat$total_puts_American$mid_price[test_start:test_end])
+MSE(binom_test,stan_dat$total_puts_American$mid_price[test_start:test_end])
 
 
 ```
