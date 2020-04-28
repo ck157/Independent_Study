@@ -881,7 +881,7 @@ x2_bs <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start:
 
 binom_test <- rep(NA,length(x2_bs[,1]))
 for (row in 1:nrow(data.frame(x2_bs))){
-  binom_test[row] <- binomopt(s=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],k=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],v=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],tt=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],d=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row], nstep = 1000, american=TRUE, putopt=TRUE)
+  binom_test[row] <- binomopt(s=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],k=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],v=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],tt=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],d=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row], nstep = 5000, american=TRUE, putopt=TRUE)
 }
 
 plot(binom_test, stan_dat$total_puts_American$mid_price[test_start:test_end])
