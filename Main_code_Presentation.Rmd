@@ -807,7 +807,7 @@ library(neuralnet)
 stan_dat <- read_rdump('Financial_Data_Put_American.R')
 train <- data.frame(stan_dat$train)
 n <- names(data.frame(stan_dat$train))
-nn <- neuralnet(y_scaled ~ x_1 + x_2 + x_3 + x_4 + x_5 + x_6, data=train, hidden=c(2,1),linear.output=TRUE ,threshold=0.01)
+nn <- neuralnet(y_scaled ~ x_1 + x_2 + x_3 + x_4 + x_5 + x_6, data=train, hidden=c(5,3),linear.output=TRUE ,threshold=0.01)
 plot(nn)
 ```
 
@@ -975,7 +975,39 @@ MSE(yhat.bag,stan_dat$total_puts_American$mid_price[test_start:test_end])
 MSE(yhat.rf,stan_dat$total_puts_American$mid_price[test_start:test_end])
 MSE(binom_test,stan_dat$total_puts_American$mid_price[test_start:test_end])
 
+#Computational Time
+library('base')
+#SGP
+system.time(stan(file="gp-fit-6dimension_SGP.stan", data=stan_dat,
+               iter=100, chains=1))
+system.time(stan(file="Predictive GP_6dimension_SGP.stan", data=post_data_SGP_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param'))
 
+#BSGP
+system.time(stan(file="gp-fit-6dimension_withBS_SGP.stan", data=stan_dat,
+               iter=100, chains=1))
+system.time(stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param'))
+
+#BS
+system.time(for (row in 1:nrow(data.frame(x2_bs))){
+  blackscholes_test[row] <- as.numeric(blackscholes(-1,S0=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],K=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],t=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],vola=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],divrate=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row])$Price)
+})
+
+#Neural Net
+system.time(neuralnet(y_scaled ~ x_1 + x_2 + x_3 + x_4 + x_5 + x_6, data=train, hidden=c(5,3),linear.output=TRUE ,threshold=0.01))
+system.time(neuralnet::compute(nn, test[,c(1:6)]))
+
+#Bagging
+system.time(randomForest(y_scaled~., data = train, mtry = 6, importance = TRUE))
+system.time(predict(bagging, newdata = test))
+
+#Random Forest
+system.time(randomForest(y_scaled~., data = train, mtry = 2, importance = TRUE))
+system.time(predict(rf, newdata = test))
+
+#Binomial Option Tree
+system.time(for (row in 1:nrow(data.frame(x2_bs))){
+  binom_test[row] <- binomopt(s=as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])[row],k=as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])[row],v=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start:test_end])[row],tt=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])[row],d=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start:test_end])[row], nstep = 5000, american=TRUE, putopt=TRUE)
+})
 ```
 
 
