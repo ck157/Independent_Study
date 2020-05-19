@@ -1010,6 +1010,71 @@ system.time(for (row in 1:nrow(data.frame(x2_bs))){
 })
 ```
 
+## Part 9: Delta Hedging Back-test
+
+```{r Backtest-Setting test to today}
+test_start_backtest <- 323 #Start of 06/10 Puts
+test_end_backtest <- 393 # End of06/10 Puts
 
 
+
+x_1_backtest <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start_backtest:test_end_backtest])
+x_2_backtest <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start_backtest:test_end_backtest])
+x_3_backtest <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start_backtest:test_end_backtest])
+x_4_backtest <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start_backtest:test_end_backtest])
+x_5_backtest <- as.numeric(stan_dat$total_puts_American$dividend_yield_scaled[test_start_backtest:test_end_backtest])
+x_6_backtest <- as.numeric(stan_dat$total_puts_American$interest_rate_scaled[test_start_backtest:test_end_backtest])
+x2_backtest <- cbind(x_1_backtest,x_2_backtest,x_3_backtest,x_4_backtest,x_5_backtest,x_6_backtest)
+```
+
+```{r computing blackscholes for backtest}
+x2_bs_backtest <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$impl_volatility[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$time_to_exp[test_start_backtest:test_end_backtest]),x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$interest_rate[test_start_backtest:test_end_backtest]))
+
+
+library('qrmtools')
+library('ragtop')
+blackscholes_test_backtest <- rep(NA,length(x2_bs_backtest[,1]))
+for (row in 1:nrow(data.frame(x2_bs_backtest))){
+  blackscholes_test_backtest[row] <- as.numeric(blackscholes(-1,S0=as.numeric(stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest])[row],K=as.numeric(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start_backtest:test_end_backtest])[row],t=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start_backtest:test_end_backtest])[row],vola=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start_backtest:test_end_backtest])[row],divrate=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start_backtest:test_end_backtest])[row])$Price)
+}
+
+```
+
+```{r Predictions_Backtest to predict for today}
+# X.grid <- expand.grid(x1 = x.grid_1, x2 = x.grid_2)
+
+post_data_bs_American_backtest <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_backtest,N1=length(stan_dat$x[,1]),N2=length(x2_backtest[,1]), bs = blackscholes_test_backtest,variables = 6)
+# post_data
+
+pred_gp_bs_backtest <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+```
+
+```{r Mean & SD of Predictions_bs}
+#Computing Mean
+y_predict_values_bs_backtest <- extract(pred_gp_bs_backtest,permuted=FALSE)
+y_mean_values_bs_backtest <- c(colMeans(y_predict_values_bs_backtest))
+y_mean_values_bs_backtest <- y_mean_values_bs_backtest[1:(length(y_mean_values_bs_backtest)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_bs_backtest <- summary(pred_gp_bs_backtest, sd=c("sd"))$summary
+pred_gp_sd_bs_backtest <- pred_gp_summary_bs_backtest[, c("sd")]
+y_sd_values_bs_backtest <- pred_gp_sd_bs_backtest[1:(length(pred_gp_sd_bs_backtest)-1)]
+```
+
+```{r-predictive performance of backtest price for today}
+ggplot(mapping=aes(x=log(y_mean_values_bs_backtest),y=log(stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
+       x = "Predicted Option Price",
+       y = "Observed Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
+
+MSE(y_mean_values_bs_backtest,stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest])
+```
+
+```{r}
+
+```
 
