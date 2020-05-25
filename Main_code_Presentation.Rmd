@@ -1012,9 +1012,11 @@ system.time(for (row in 1:nrow(data.frame(x2_bs))){
 
 ## Part 9: Delta Hedging Back-test
 
+9-1 Generating BSGP prices for Backtesting
+
 ```{r Backtest-Setting test to today}
 test_start_backtest <- 323 #Start of 06/10 Puts
-test_end_backtest <- 393 # End of06/10 Puts
+test_end_backtest <- 393 # End of 06/10 Puts
 
 
 
@@ -1046,7 +1048,7 @@ for (row in 1:nrow(data.frame(x2_bs_backtest))){
 post_data_bs_American_backtest <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_backtest,N1=length(stan_dat$x[,1]),N2=length(x2_backtest[,1]), bs = blackscholes_test_backtest,variables = 6)
 # post_data
 
-pred_gp_bs_backtest <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+pred_gp_bs_backtest <- stan(file="Predictive GP_6dimension_withBS_SGP_Delta.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 ```
 
 ```{r Mean & SD of Predictions_bs}
@@ -1061,7 +1063,7 @@ pred_gp_sd_bs_backtest <- pred_gp_summary_bs_backtest[, c("sd")]
 y_sd_values_bs_backtest <- pred_gp_sd_bs_backtest[1:(length(pred_gp_sd_bs_backtest)-1)]
 ```
 
-```{r-predictive performance of backtest price for today}
+```{r predictive performance of backtest price for today}
 ggplot(mapping=aes(x=log(y_mean_values_bs_backtest),y=log(stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest]))) +
   geom_point() +
   labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
@@ -1074,7 +1076,36 @@ ggplot(mapping=aes(x=log(y_mean_values_bs_backtest),y=log(stan_dat$total_puts_Am
 MSE(y_mean_values_bs_backtest,stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest])
 ```
 
-```{r}
+9-2 Computing BS Delta
 
+```{r compute BSGP delta}
+library(derivmkts)
+BS_Delta <- greeks(bsput(s=as.numeric(stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest]), k=as.numeric(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest]), v=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start_backtest:test_end_backtest]), r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start_backtest:test_end_backtest]), tt=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start_backtest:test_end_backtest]), d=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start_backtest:test_end_backtest])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
+
+BS_Delta
+```
+
+9-3 Computing BSGP vector C & vector K'
+
+```{r}
+vector_c_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+vector_c_values
+
+vector_c_values <- extract(vector_c_values,permuted=FALSE)
+vector_c_values <- c(colMeans(vector_c_values))
+vector_c_values <- vector_c_values[1:(length(vector_c_values)-1)]
+
+vector_k_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+
+
+vector_k_values <- extract(vector_k_values,permuted=FALSE)
+
+vector_k_values <- c(colMeans(vector_k_values))
+vector_k_values <- vector_k_values[1:(length(vector_k_values)-1)]
+vector_k <- matrix(vector_k_values, 71, 322, byrow=TRUE)
+
+BSGP_Delta <- BS_Delta + vector_k %*% vector_c_values
+BSGP_Delta
 ```
 
