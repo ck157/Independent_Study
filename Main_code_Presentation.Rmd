@@ -1048,7 +1048,7 @@ for (row in 1:nrow(data.frame(x2_bs_backtest))){
 post_data_bs_American_backtest <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_backtest,N1=length(stan_dat$x[,1]),N2=length(x2_backtest[,1]), bs = blackscholes_test_backtest,variables = 6)
 # post_data
 
-pred_gp_bs_backtest <- stan(file="Predictive GP_6dimension_withBS_SGP_Delta.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+pred_gp_bs_backtest <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 ```
 
 ```{r Mean & SD of Predictions_bs}
