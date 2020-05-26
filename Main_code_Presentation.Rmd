@@ -1089,7 +1089,7 @@ BS_Delta
 
 ```{r}
 vector_c_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
-vector_c_values
+
 
 vector_c_values <- extract(vector_c_values,permuted=FALSE)
 vector_c_values <- c(colMeans(vector_c_values))
@@ -1100,12 +1100,20 @@ vector_k_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan",
 
 
 vector_k_values <- extract(vector_k_values,permuted=FALSE)
-
 vector_k_values <- c(colMeans(vector_k_values))
 vector_k_values <- vector_k_values[1:(length(vector_k_values)-1)]
-vector_k <- matrix(vector_k_values, 71, 322, byrow=TRUE)
+
+
+vector_k <- matrix(vector_k_values, 71, 322, byrow=FALSE)
 
 BSGP_Delta <- BS_Delta + vector_k %*% vector_c_values
 BSGP_Delta
+BS_Delta
+hist(abs(vector_c_values))
 ```
+
+##Improve JBES 3.3 (Delta part)
+##Interpret Ci and color plot (ref ipad)
+##Backtest delta neutral hedging strategy
+
 

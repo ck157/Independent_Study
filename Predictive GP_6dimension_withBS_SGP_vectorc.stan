@@ -17,7 +17,7 @@ functions {
     matrix[N1,N1] K;
     matrix[N2,N2] K2;
     
-    {
+        {
       for (i in 1:N1) {
         K[i, i] = gamma2 + sigma2; //diagonal
         for (j in (i+1):N1) { //off-diagonals      

@@ -18,24 +18,26 @@ functions {
     matrix[N2,N2] K2;
     
     {
-      for (i in 1:N1) {
-        K[i, i] = gamma2 + sigma2; //diagonal
-        for (j in (i+1):N1) { //off-diagonals      
-          K[i,j] = gamma2;
-          for (l in 1:variables){
-            K[i, j] = K[i,j]*exp(-theta[l]*square(x_train[i,l] - x_train[j,l]));
-            K[j, i] = K[i, j];
-          }
-        }  
-      }   
-      L_K = cholesky_decompose(K);
-      
-      
-      mu_vec1 = mu; #Needs to be changed with Black Shocles
-      mu_vec2 = bs; #Needs to be changed with Black Shocles
-      
-      L_K_div_y1 = mdivide_left_tri_low(L_K, (y1 - mu_vec1));
-      K_div_y1 = mdivide_right_tri_low(L_K_div_y1', L_K)';
+      // for (i in 1:N1) {
+      //   K[i, i] = gamma2 + sigma2; //diagonal
+      //   for (j in (i+1):N1) { //off-diagonals      
+      //     K[i,j] = gamma2;
+      //     for (l in 1:variables){
+      //       K[i, j] = K[i,j]*exp(-theta[l]*square(x_train[i,l] - x_train[j,l]));
+      //       K[j, i] = K[i, j];
+      //     }
+      //   }  
+      // }   
+      // L_K = cholesky_decompose(K);
+      // 
+      // 
+      // mu_vec1 = mu; #Needs to be changed with Black Shocles
+      // mu_vec2 = bs; #Needs to be changed with Black Shocles
+      // 
+      // L_K_div_y1 = mdivide_left_tri_low(L_K, (y1 - mu_vec1));
+      // K_div_y1 = mdivide_right_tri_low(L_K_div_y1', L_K)';
+  
+  
   
       for (i in 1:N1) {
         for (j in 1:N2) { //off-diagonals
@@ -44,12 +46,12 @@ functions {
           k_x1_x2[i, j] = k_x1_x2[i,j]*exp(-theta[l]*square(x_train[i,l] - x_test[j,l]));
           }
         }  
-      }
+      }   
       
       for (i in 1:N1) {
-        for (j in 1:N2) {
-          k_x1_x2[i,j] = (-2*theta[1])*(x_train[i,1] - x_test[j,1])*k_x1_x2[i,j];
-        }
+       for (j in 1:N2) {
+         k_x1_x2[i,j] = (-2*theta[1])*(x_train[i,1] - x_test[j,1])*k_x1_x2[i,j];
+       }
       }
       
     return k_x1_x2';
