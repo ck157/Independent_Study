@@ -1012,7 +1012,7 @@ system.time(for (row in 1:nrow(data.frame(x2_bs))){
 
 ## Part 9: Delta Hedging Back-test
 
-9-4 Computing Actual Delta for the next day
+9-1 Computing Actual Delta for the next day
 
 ```{r}
 tmr_start_backtest <- 394 #6/11
@@ -1048,7 +1048,7 @@ Real_delta <- as.vector(unlist((tmr_option_price-today_option_price)/(tmr_underl
 
 ```
 
-9-1 Generating BSGP prices for Backtesting
+9-2 Generating BSGP prices for Backtesting
 
 ```{r Backtest-Setting test to today}
 test_start_backtest <- 323 #Start of 06/10 Puts
@@ -1111,7 +1111,7 @@ ggplot(mapping=aes(x=log(y_mean_values_bs_backtest),y=log(cbind(stan_dat$total_p
 MSE(y_mean_values_bs_backtest,cbind(stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest])[c(match(IDs,today_data))])
 ```
 
-9-2 Computing BS Delta
+9-3 Computing BS Delta
 
 ```{r compute BSGP delta}
 library(derivmkts)
@@ -1120,7 +1120,7 @@ BS_Delta <- greeks(bsput(s=as.numeric(x2_bs_backtest[,1]), k=as.numeric(x2_bs_ba
 BS_Delta
 ```
 
-9-3 Computing BSGP vector C & vector K'
+9-4 Computing BSGP vector C & vector K'
 
 ```{r}
 vector_c_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American_backtest,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
