@@ -1107,10 +1107,35 @@ vector_k_values <- vector_k_values[1:(length(vector_k_values)-1)]
 vector_k <- matrix(vector_k_values, 71, 322, byrow=FALSE)
 
 BSGP_Delta <- BS_Delta + vector_k %*% vector_c_values
-BSGP_Delta
-BS_Delta
 hist(abs(vector_c_values))
 ```
+
+9-4 Computing Actual Delta for the next day
+
+```{r}
+tmr_start_backtest <- 394 #6/11
+tmr_end_backtest <- 564 #6/11
+
+tmr_option_price <- stan_dat$total_puts_American$mid_price[tmr_start_backtest:tmr_end_backtest]
+today_option_price <- stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest]
+
+tmr_underlying_price <- stan_dat$total_puts_American$forward_price[tmr_start_backtest:tmr_end_backtest]
+today_underlying_price <- stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest]
+
+library("data.table")
+library("fastmatch")
+
+tmr_data <- setDT(data.frame(cbind(stan_dat$total_puts_American$strike_price[tmr_start_backtest:tmr_end_backtest],stan_dat$total_puts_American$exdate[tmr_start_backtest:tmr_end_backtest])))
+today_data <- setDT(data.frame(cbind(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest],stan_dat$total_puts_American$exdate[test_start_backtest:test_end_backtest])))
+
+compare_rows <- (tmr_data$X1 %fin% today_data$X1) & (tmr_data$X2 %fin% today_data$X2)
+
+tmr_valid_rows <- tmr_data[which(compare_rows == TRUE)]
+today_valid_rows <- today_data[which(compare_rows == TRUE)]
+
+```
+
+
 
 ##Improve JBES 3.3 (Delta part)
 ##Interpret Ci and color plot (ref ipad)
