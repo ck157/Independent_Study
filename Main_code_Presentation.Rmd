@@ -1012,12 +1012,47 @@ system.time(for (row in 1:nrow(data.frame(x2_bs))){
 
 ## Part 9: Delta Hedging Back-test
 
+9-4 Computing Actual Delta for the next day
+
+```{r}
+tmr_start_backtest <- 394 #6/11
+tmr_end_backtest <- 465 #6/11
+
+tmr_options <- stan_dat$total_puts_American[tmr_start_backtest:tmr_end_backtest,]
+today_options <- stan_dat$total_puts_American[test_start_backtest:test_end_backtest,]
+
+#filtering out options that are present both today and tmr
+tmr_data <- stan_dat$total_puts_American$optionid[tmr_start_backtest:tmr_end_backtest]
+today_data <- stan_dat$total_puts_American$optionid[test_start_backtest:test_end_backtest]
+
+IDs<- unique(today_data[today_data%in%tmr_data])
+
+tmr_option_price <- tmr_options %>% 
+  filter(optionid %in% IDs == TRUE) %>% 
+  arrange(optionid) %>% 
+  select(mid_price)
+today_option_price <- today_options %>% 
+  filter(optionid %in% IDs == TRUE) %>% 
+  arrange(optionid) %>% 
+  select(mid_price)
+tmr_underlying_price <- tmr_options %>% 
+  filter(optionid %in% IDs == TRUE) %>% 
+  arrange(optionid) %>% 
+  select(forward_price)
+today_underlying_price <- today_options %>% 
+  filter(optionid %in% IDs == TRUE) %>% 
+  arrange(optionid) %>% 
+  select(forward_price)
+
+Real_delta <- as.vector(unlist((tmr_option_price-today_option_price)/(tmr_underlying_price-today_underlying_price)))
+
+```
+
 9-1 Generating BSGP prices for Backtesting
 
 ```{r Backtest-Setting test to today}
 test_start_backtest <- 323 #Start of 06/10 Puts
 test_end_backtest <- 393 # End of 06/10 Puts
-
 
 
 x_1_backtest <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start_backtest:test_end_backtest])
@@ -1026,18 +1061,18 @@ x_3_backtest <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[t
 x_4_backtest <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start_backtest:test_end_backtest])
 x_5_backtest <- as.numeric(stan_dat$total_puts_American$dividend_yield_scaled[test_start_backtest:test_end_backtest])
 x_6_backtest <- as.numeric(stan_dat$total_puts_American$interest_rate_scaled[test_start_backtest:test_end_backtest])
-x2_backtest <- cbind(x_1_backtest,x_2_backtest,x_3_backtest,x_4_backtest,x_5_backtest,x_6_backtest)
+x2_backtest <- cbind(x_1_backtest,x_2_backtest,x_3_backtest,x_4_backtest,x_5_backtest,x_6_backtest)[c(match(IDs,today_data)),]
 ```
 
 ```{r computing blackscholes for backtest}
-x2_bs_backtest <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$impl_volatility[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$time_to_exp[test_start_backtest:test_end_backtest]),x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$interest_rate[test_start_backtest:test_end_backtest]))
+x2_bs_backtest <- cbind(as.numeric(stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$impl_volatility[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$time_to_exp[test_start_backtest:test_end_backtest]),x.grid_5 <- as.numeric(stan_dat$total_puts_American$dividend_yield[test_start_backtest:test_end_backtest]),as.numeric(stan_dat$total_puts_American$interest_rate[test_start_backtest:test_end_backtest]))[c(match(IDs,today_data)),]
 
 
 library('qrmtools')
 library('ragtop')
 blackscholes_test_backtest <- rep(NA,length(x2_bs_backtest[,1]))
 for (row in 1:nrow(data.frame(x2_bs_backtest))){
-  blackscholes_test_backtest[row] <- as.numeric(blackscholes(-1,S0=as.numeric(stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest])[row],K=as.numeric(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest])[row],r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start_backtest:test_end_backtest])[row],t=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start_backtest:test_end_backtest])[row],vola=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start_backtest:test_end_backtest])[row],divrate=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start_backtest:test_end_backtest])[row])$Price)
+  blackscholes_test_backtest[row] <- as.numeric(blackscholes(-1,S0=as.numeric(x2_bs_backtest[row,1]),K=as.numeric(x2_bs_backtest[row,2]),r=as.numeric(x2_bs_backtest[row,6]),t=as.numeric(x2_bs_backtest[row,4]),vola=as.numeric(x2_bs_backtest[row,3]),divrate=as.numeric(x2_bs_backtest[row,5]))$Price)
 }
 
 ```
@@ -1064,7 +1099,7 @@ y_sd_values_bs_backtest <- pred_gp_sd_bs_backtest[1:(length(pred_gp_sd_bs_backte
 ```
 
 ```{r predictive performance of backtest price for today}
-ggplot(mapping=aes(x=log(y_mean_values_bs_backtest),y=log(stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest]))) +
+ggplot(mapping=aes(x=log(y_mean_values_bs_backtest),y=log(cbind(stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest])[c(match(IDs,today_data))]))) +
   geom_point() +
   labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
        x = "Predicted Option Price",
@@ -1073,14 +1108,14 @@ ggplot(mapping=aes(x=log(y_mean_values_bs_backtest),y=log(stan_dat$total_puts_Am
   theme(text=element_text(size=16))+
   geom_abline(intercept = 0, slope = 1)
 
-MSE(y_mean_values_bs_backtest,stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest])
+MSE(y_mean_values_bs_backtest,cbind(stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest])[c(match(IDs,today_data))])
 ```
 
 9-2 Computing BS Delta
 
 ```{r compute BSGP delta}
 library(derivmkts)
-BS_Delta <- greeks(bsput(s=as.numeric(stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest]), k=as.numeric(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest]), v=as.numeric(stan_dat$total_puts_American$impl_volatility[test_start_backtest:test_end_backtest]), r=as.numeric(stan_dat$total_puts_American$interest_rate[test_start_backtest:test_end_backtest]), tt=as.numeric(stan_dat$total_puts_American$time_to_exp[test_start_backtest:test_end_backtest]), d=as.numeric(stan_dat$total_puts_American$dividend_yield[test_start_backtest:test_end_backtest])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
+BS_Delta <- greeks(bsput(s=as.numeric(x2_bs_backtest[,1]), k=as.numeric(x2_bs_backtest[,2]), v=as.numeric(x2_bs_backtest[,3]), r=as.numeric(x2_bs_backtest[,6]), tt=as.numeric(x2_bs_backtest[,4]), d=as.numeric(x2_bs_backtest[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
 
 BS_Delta
 ```
@@ -1104,36 +1139,43 @@ vector_k_values <- c(colMeans(vector_k_values))
 vector_k_values <- vector_k_values[1:(length(vector_k_values)-1)]
 
 
-vector_k <- matrix(vector_k_values, 71, 322, byrow=FALSE)
+vector_k <- matrix(vector_k_values, nrow(x2_backtest), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta <- BS_Delta + vector_k %*% vector_c_values
 hist(abs(vector_c_values))
 ```
 
-9-4 Computing Actual Delta for the next day
+9-5 Comparing Performance
 
 ```{r}
-tmr_start_backtest <- 394 #6/11
-tmr_end_backtest <- 564 #6/11
+mean(abs(BSGP_Delta - Real_delta))
+mean(abs(BS_Delta - Real_delta))
 
-tmr_option_price <- stan_dat$total_puts_American$mid_price[tmr_start_backtest:tmr_end_backtest]
-today_option_price <- stan_dat$total_puts_American$mid_price[test_start_backtest:test_end_backtest]
+Delta_data <- cbind(BSGP_Delta,BS_Delta)
 
-tmr_underlying_price <- stan_dat$total_puts_American$forward_price[tmr_start_backtest:tmr_end_backtest]
-today_underlying_price <- stan_dat$total_puts_American$forward_price[test_start_backtest:test_end_backtest]
+ggplot(mapping=aes(x=BSGP_Delta,y=Real_delta)) +
+  geom_point() +
+  labs(title = "BSGP Delta vs Actual Delta",
+       x = "BSGP Delta",
+       y = "Observed Delta") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
 
-library("data.table")
-library("fastmatch")
 
-tmr_data <- setDT(data.frame(cbind(stan_dat$total_puts_American$strike_price[tmr_start_backtest:tmr_end_backtest],stan_dat$total_puts_American$exdate[tmr_start_backtest:tmr_end_backtest])))
-today_data <- setDT(data.frame(cbind(stan_dat$total_puts_American$strike_price[test_start_backtest:test_end_backtest],stan_dat$total_puts_American$exdate[test_start_backtest:test_end_backtest])))
+ggplot(mapping=aes(x=BS_Delta,y=Real_delta)) +
+  geom_point() +
+  labs(title = "BS Delta vs Actual Delta",
+       x = "BS Delta",
+       y = "Observed Delta") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
 
-compare_rows <- (tmr_data$X1 %fin% today_data$X1) & (tmr_data$X2 %fin% today_data$X2)
-
-tmr_valid_rows <- tmr_data[which(compare_rows == TRUE)]
-today_valid_rows <- today_data[which(compare_rows == TRUE)]
+matplot(Delta_data,Real_delta,type="o", xlab = "BSGP Delta & BS Delta", ylab = "Observed Delta")
 
 ```
+
 
 
 
