@@ -1142,7 +1142,7 @@ vector_k_values <- vector_k_values[1:(length(vector_k_values)-1)]
 vector_k <- matrix(vector_k_values, nrow(x2_backtest), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta <- BS_Delta + vector_k %*% vector_c_values
-hist(abs(vector_c_values))
+
 ```
 
 9-5 Comparing Performance
@@ -1176,11 +1176,88 @@ matplot(Delta_data,Real_delta,type="o", xlab = "BSGP Delta & BS Delta", ylab = "
 
 ```
 
+10.Learning the Influence Coefficient
+
+10-1 Distribution of Influence Coefficient
+
+```{r}
+IC <- abs(vector_c_values)
+ggplot(mapping = aes(x=IC)) + geom_histogram()+
+  labs(title = "Distribution of Influence Coefficient",
+       x = "Values of Influence Coefficient",
+       y = "Frequency") +
+  theme_bw() +
+  theme(text=element_text(size=16))
 
 
+```
 
-##Improve JBES 3.3 (Delta part)
-##Interpret Ci and color plot (ref ipad)
-##Backtest delta neutral hedging strategy
+10-2 Color Coded Map of Influence Coefficient
+
+```{r}
+# library(grid)
+# grid.newpage()
+#Spot vs Strike
+ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,2], color = IC)) +
+  geom_point(size = 2) +
+  labs(title = "Influence Coefficient in Training Data - Spot vs Strike",
+       x = "Spot Price",
+       y = "Strike Price") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  scale_colour_gradient(low="blue", high="red")
+
+#Spot vs Implied Volatility
+ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,3], color = IC)) +
+  geom_point(size = 2) +
+  labs(title = "Influence Coefficient in Training Data - Spot vs Implied Volatility",
+       x = "Spot Price",
+       y = "Implied Volatility") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  scale_colour_gradient(low="blue", high="red")
+
+#Spot vs Time to Expiration
+ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,4], color = IC)) +
+  geom_point(size = 2) +
+  labs(title = "Influence Coefficient in Training Data - Spot vs Time to Expiration",
+       x = "Spot Price",
+       y = "Time to Expiration") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  scale_colour_gradient(low="blue", high="red")
+
+#Spot vs Dividend Yield
+ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,5], color = IC)) +
+  geom_point(size = 2) +
+  labs(title = "Influence Coefficient in Training Data - Spot vs Dividend Yield",
+       x = "Spot Price",
+       y = "Dividend Yield") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  scale_colour_gradient(low="blue", high="red")
+
+#Spot vs Interest Rate
+ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,6], color = IC)) +
+  geom_point(size = 2) +
+  labs(title = "Influence Coefficient in Training Data - Spot vs Interest Rate",
+       x = "Spot Price",
+       y = "Interest Rate") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  scale_colour_gradient(low="blue", high="red")
+
+#Spot vs Option Price
+ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$y, color = IC)) +
+  geom_point(size = 2) +
+  labs(title = "Influence Coefficient in Training Data - Spot vs Option Price",
+       x = "Spot Price",
+       y = "Option Price") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  scale_colour_gradient(low="blue", high="red")
+
+```
+
 
 
