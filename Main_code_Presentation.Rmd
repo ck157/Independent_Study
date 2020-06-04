@@ -1192,6 +1192,8 @@ ggplot(mapping = aes(x=IC)) + geom_histogram()+
 
 ```
 
+Try out decision tree/classification tree after dividing the DADs into two groups "High DAD" & "Low DAD" by median, maybe even random forest or more -> trying to visualize where the data is influential
+
 10-2 Color Coded Map of Influence Coefficient
 
 ```{r}
@@ -1260,4 +1262,14 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$y, color = IC)) +
 ```
 
 
+
+##Don't make portfolio for Delta  Hedging strategy, instead choose where the delta is most different(maybe top quantile for highest differences-HOW TO CHOOSE? WHAT LOGIC TO USE FOR CHOOSING THIS?) then use them only. Using all of them will only reduce the effect.
+
+##Evaluate based on payoff of the delta hedge rather than comparing with the realized delta
+
+##EDITS on JBES
+
+##quantize it to 0's and 1's to make low DAD and high DADs. or maybe even more classes. 
+
+##Look into finance fintech quant conferences to submit
 
