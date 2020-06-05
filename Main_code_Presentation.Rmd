@@ -1018,6 +1018,10 @@ system.time(for (row in 1:nrow(data.frame(x2_bs))){
 tmr_start_backtest <- 394 #6/11
 tmr_end_backtest <- 465 #6/11
 
+test_start_backtest <- 323 #Start of 06/10 Puts
+test_end_backtest <- 393 # End of 06/10 Puts
+
+
 tmr_options <- stan_dat$total_puts_American[tmr_start_backtest:tmr_end_backtest,]
 today_options <- stan_dat$total_puts_American[test_start_backtest:test_end_backtest,]
 
@@ -1051,8 +1055,6 @@ Real_delta <- as.vector(unlist((tmr_option_price-today_option_price)/(tmr_underl
 9-2 Generating BSGP prices for Backtesting
 
 ```{r Backtest-Setting test to today}
-test_start_backtest <- 323 #Start of 06/10 Puts
-test_end_backtest <- 393 # End of 06/10 Puts
 
 
 x_1_backtest <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start_backtest:test_end_backtest])
@@ -1145,7 +1147,17 @@ BSGP_Delta <- BS_Delta + vector_k %*% vector_c_values
 
 ```
 
-9-5 Comparing Performance
+9-5 Choosing which options to use
+
+```{r}
+hist(BS_Delta-BSGP_Delta)
+selected_options <- sort(BS_Delta-BSGP_Delta, index.return=TRUE, decreasing=TRUE)$ix[1:5]
+BSGP_Delta[c(selected_options)]
+BS_Delta[c(selected_options)]
+```
+
+
+9-6 Comparing Performance
 
 ```{r}
 mean(abs(BSGP_Delta - Real_delta))
@@ -1266,6 +1278,8 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$y, color = IC)) +
 ##Don't make portfolio for Delta  Hedging strategy, instead choose where the delta is most different(maybe top quantile for highest differences-HOW TO CHOOSE? WHAT LOGIC TO USE FOR CHOOSING THIS?) then use them only. Using all of them will only reduce the effect.
 
 ##Evaluate based on payoff of the delta hedge rather than comparing with the realized delta
+
+##Prove the point of delta hedging(why use delta hedging with graphs)
 
 ##EDITS on JBES
 
