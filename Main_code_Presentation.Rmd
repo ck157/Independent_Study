@@ -1150,10 +1150,32 @@ BSGP_Delta <- BS_Delta + vector_k %*% vector_c_values
 9-5 Choosing which options to use
 
 ```{r}
-hist(BS_Delta-BSGP_Delta)
-selected_options <- sort(BS_Delta-BSGP_Delta, index.return=TRUE, decreasing=TRUE)$ix[1:5]
-BSGP_Delta[c(selected_options)]
-BS_Delta[c(selected_options)]
+# hist(BS_Delta-BSGP_Delta)
+# selected_options <- sort(BS_Delta-BSGP_Delta, index.return=TRUE, decreasing=TRUE)$ix[1]
+# BSGP_Delta[c(selected_options)]
+# BS_Delta[c(selected_options)]
+
+# BSGP_Delta_portfolio <- sum(BSGP_Delta[c(selected_options)])
+# BS_Delta_portfolio <- sum(BS_Delta[c(selected_options)])
+
+BSGP_Delta_portfolio <- sum(BSGP_Delta)
+BS_Delta_portfolio <- sum(BS_Delta)
+
+##Assuming we hedge with the SPY closing price
+##6/10 closing price for SPY: 288.97
+##6/11 closing price for SPY: 288.9
+
+BSGP_hedge_cost <-288.97*abs(BSGP_Delta_portfolio)*100
+BS_hedge_cost <- 288.97*abs(BS_Delta_portfolio)*100
+
+BSGP_portfolio_value_change <- (sum(tmr_option_price$mid_price)-sum(today_option_price$mid_price)) + ((288.9-288.97)*abs(BSGP_Delta_portfolio)*100)
+
+BS_portfolio_value_change <- (sum(tmr_option_price$mid_price)-sum(today_option_price$mid_price)) + ((288.9-288.97)*abs(BS_Delta_portfolio)*100)
+
+BSGP_portfolio_value_change
+BS_portfolio_value_change
+
+##Problem is that there is no way to figure out if positive discrepancy is better or if negative discrepancy is better!!!!
 ```
 
 
@@ -1274,8 +1296,6 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$y, color = IC)) +
 ```
 
 
-
-##Don't make portfolio for Delta  Hedging strategy, instead choose where the delta is most different(maybe top quantile for highest differences-HOW TO CHOOSE? WHAT LOGIC TO USE FOR CHOOSING THIS?) then use them only. Using all of them will only reduce the effect.
 
 ##Evaluate based on payoff of the delta hedge rather than comparing with the realized delta
 
