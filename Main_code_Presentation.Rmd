@@ -1223,7 +1223,26 @@ ggplot(mapping = aes(x=IC)) + geom_histogram()+
   theme_bw() +
   theme(text=element_text(size=16))
 
+High_DAD <- c()
+for (number in IC){
+  if (number > unname(quantile(IC)[4])){
+    High_DAD <- append(High_DAD,number)
+  }
+}
 
+Low_DAD <- c()
+for (number in IC){
+  if (number < unname(quantile(IC)[2])){
+    Low_DAD <- append(Low_DAD,number)
+  }
+}
+
+High_DAD_data <- stan_dat$x[match(High_DAD,IC),]
+Low_DAD_data <- stan_dat$x[match(Low_DAD,IC),]
+DAD_data <- rbind(High_DAD_data,Low_DAD_data) 
+DAD_values <- c(rep(1,times=length(High_DAD)), rep(0,times=length(Low_DAD)))
+
+Training_option_price <- append(stan_dat$y[match(High_DAD,IC)], stan_dat$y[match(Low_DAD,IC)])
 ```
 
 Try out decision tree/classification tree after dividing the DADs into two groups "High DAD" & "Low DAD" by median, maybe even random forest or more -> trying to visualize where the data is influential
@@ -1234,7 +1253,7 @@ Try out decision tree/classification tree after dividing the DADs into two group
 # library(grid)
 # grid.newpage()
 #Spot vs Strike
-ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,2], color = IC)) +
+ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,2], color = DAD_values)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Strike",
        x = "Spot Price",
@@ -1244,7 +1263,7 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,2], color = IC)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Implied Volatility
-ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,3], color = IC)) +
+ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,3], color = DAD_values)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Implied Volatility",
        x = "Spot Price",
@@ -1254,7 +1273,7 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,3], color = IC)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Time to Expiration
-ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,4], color = IC)) +
+ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,4], color = DAD_values)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Time to Expiration",
        x = "Spot Price",
@@ -1264,7 +1283,7 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,4], color = IC)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Dividend Yield
-ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,5], color = IC)) +
+ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,5], color = DAD_values)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Dividend Yield",
        x = "Spot Price",
@@ -1274,7 +1293,7 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,5], color = IC)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Interest Rate
-ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,6], color = IC)) +
+ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,6], color = DAD_values)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Interest Rate",
        x = "Spot Price",
@@ -1284,7 +1303,7 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$x[,6], color = IC)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Option Price
-ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$y, color = IC)) +
+ggplot(mapping=aes(x=DAD_data[,1],y=Training_option_price, color = DAD_values)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Option Price",
        x = "Spot Price",
@@ -1297,7 +1316,7 @@ ggplot(mapping=aes(x=stan_dat$x[,1],y=stan_dat$y, color = IC)) +
 
 
 
-##Evaluate based on payoff of the delta hedge rather than comparing with the realized delta
+##Evaluate based on payoff of the delta hedge rather than comparing with the realized delta V
 
 ##Prove the point of delta hedging(why use delta hedging with graphs)
 
