@@ -1320,9 +1320,9 @@ ggplot(mapping=aes(x=DAD_data[,1],y=Training_option_price, color = DAD_values)) 
 
 ##Prove the point of delta hedging(why use delta hedging with graphs)
 
-##EDITS on JBES
+##EDITS on JBES (V)
 
-##quantize it to 0's and 1's to make low DAD and high DADs. or maybe even more classes. 
+##quantize it to 0's and 1's to make low DAD and high DADs. or maybe even more classes.  V
 
-##Look into finance fintech quant conferences to submit
+##Look into finance fintech quant conferences to submit: https://waset.org/quantitative-finance-and-accounting-conference-in-august-2020-in-tokyo
 
