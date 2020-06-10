@@ -1165,7 +1165,7 @@ BS_Delta_portfolio <- sum(BS_Delta)
 ##6/10 closing price for SPY: 288.97
 ##6/11 closing price for SPY: 288.9
 
-BSGP_hedge_cost <-288.97*abs(BSGP_Delta_portfolio)*100
+BSGP_hedge_cost <- 288.97*abs(BSGP_Delta_portfolio)*100
 BS_hedge_cost <- 288.97*abs(BS_Delta_portfolio)*100
 
 BSGP_portfolio_value_change <- (sum(tmr_option_price$mid_price)-sum(today_option_price$mid_price)) + ((288.9-288.97)*abs(BSGP_Delta_portfolio)*100)
@@ -1314,15 +1314,12 @@ ggplot(mapping=aes(x=DAD_data[,1],y=Training_option_price, color = DAD_values)) 
 
 ```
 
-
-
-##Evaluate based on payoff of the delta hedge rather than comparing with the realized delta V
+##Averaging out delta-hedge performance -> delta hedge for one week then average the profit/loss of the delta hedge for the test week
+##Will need to add each passed day into the training data for the BSGP model when delta hediging for the test week
 
 ##Prove the point of delta hedging(why use delta hedging with graphs)
 
-##EDITS on JBES (V)
+##EDITS on JBES (V) - cutting down on section 4
 
-##quantize it to 0's and 1's to make low DAD and high DADs. or maybe even more classes.  V
-
-##Look into finance fintech quant conferences to submit: https://waset.org/quantitative-finance-and-accounting-conference-in-august-2020-in-tokyo
+##4.5 - 3d plot of discrepancy and 2 variables (Ref photo) see if confidence interval includes 0. 2 plots -> 1st is just the discrepancy in 3d, 2nd is width of confidence interval in 3d + color code the plots as well.
 
