@@ -318,11 +318,11 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-library(base)
-persp(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "SGP Means (Spot Price & Strike Price)")
-
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-persp(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "SGP Standard Deviation (Spot Price & Strike Price)")
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -336,22 +336,20 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BSGP Average Price (Spot Price & Strike Price)")
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Spot Price & Strike Price)")
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex = 2, main = "Black-Scholes Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BlackScholes Average Price (Spot Price & Strike Price)")
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex = 2, main = "Black-Scholes Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-# persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Spot Price & Strike Price)")
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+
 ```
 
 5-2: Contour Plots of Implied Volatility & Time to Expiration
@@ -413,13 +411,11 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "SGP Average Price (Impl_vol & Time_to_Exp)")
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "SGP Standard Deviation (Impl_vol & Time_to_Exp)")
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -433,23 +429,19 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "BSGP Average Price (Impl_vol & Time_to_Exp)")
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Impl_vol & Time_to_Exp)")
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "Blackscholes Average Price (Impl_vol & Time_to_Exp)")
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Impl_vol & Time_to_Exp)")
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
 5-3: Contour Plots of Strike Price and Implied Volatility
@@ -511,13 +503,11 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "SGP Average Price (Strike Price & Impl_vol)")
+contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "SGP Standard Deviation (Strike Price & Impl_vol)")
+contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -531,23 +521,19 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "BSGP Average Price (Strike Price & Impl_vol)")
+contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Strike Price & Impl_vol)")
+contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(blackschoels_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
+contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 #Contour of Variance
-# contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-# persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Strike Price & Impl_vol)")
+contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
 ```
 
 ## Part 6: Standard Deviation of Predicted Values
@@ -1298,7 +1284,7 @@ post_data_bs_American_backtest_1 <- list(theta=c(post_mean_theta_1_bs,post_mean_
 # post_data
 
 pred_gp_bs_backtest_1 <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American_backtest_1,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
-# ---------------------------------------------------
+---------------------------------------------------
 # Fitting GP model
 stan_dat_2 <- read_rdump('Financial_Data_Put_American_2.R')
 fit_gp_bs_American_2 <- stan(file="gp-fit-6dimension_withBS_SGP.stan", data=stan_dat_2,
@@ -1323,7 +1309,7 @@ post_data_bs_American_backtest_2 <- list(theta=c(post_mean_theta_1_bs_2,post_mea
 
 pred_gp_bs_backtest_2 <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American_backtest_2,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
-# ------------------------------------
+------------------------------------
 # Fitting GP model
 stan_dat_3 <- read_rdump('Financial_Data_Put_American_3.R')
 fit_gp_bs_American_3 <- stan(file="gp-fit-6dimension_withBS_SGP.stan", data=stan_dat_3,
@@ -1348,7 +1334,7 @@ post_data_bs_American_backtest_3 <- list(theta=c(post_mean_theta_1_bs_3,post_mea
 
 pred_gp_bs_backtest_3 <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American_backtest_3,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
-# ------------------------------------
+------------------------------------
 # Fitting GP model
 stan_dat_4 <- read_rdump('Financial_Data_Put_American_4.R')
 fit_gp_bs_American_4 <- stan(file="gp-fit-6dimension_withBS_SGP.stan", data=stan_dat_4,
@@ -1373,7 +1359,7 @@ post_data_bs_American_backtest_4 <- list(theta=c(post_mean_theta_1_bs_4,post_mea
 
 pred_gp_bs_backtest_4 <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American_backtest_4,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
-# ------------------------------------
+------------------------------------
 # Fitting GP model
 stan_dat_5 <- read_rdump('Financial_Data_Put_American_5.R')
 fit_gp_bs_American_5 <- stan(file="gp-fit-6dimension_withBS_SGP.stan", data=stan_dat_5,
@@ -1410,7 +1396,7 @@ pred_gp_summary_bs_backtest_1 <- summary(pred_gp_bs_backtest_1, sd=c("sd"))$summ
 pred_gp_sd_bs_backtest_1 <- pred_gp_summary_bs_backtest_1[, c("sd")]
 y_sd_values_bs_backtest_1 <- pred_gp_sd_bs_backtest_1[1:(length(pred_gp_sd_bs_backtest_1)-1)]
 
-# ----------------------------------
+----------------------------------
 #Computing Mean
 y_predict_values_bs_backtest_2 <- extract(pred_gp_bs_backtest_2,permuted=FALSE)
 y_mean_values_bs_backtest_2 <- c(colMeans(y_predict_values_bs_backtest_2))
@@ -1421,7 +1407,7 @@ pred_gp_summary_bs_backtest_2 <- summary(pred_gp_bs_backtest_2, sd=c("sd"))$summ
 pred_gp_sd_bs_backtest_2 <- pred_gp_summary_bs_backtest_2[, c("sd")]
 y_sd_values_bs_backtest_2 <- pred_gp_sd_bs_backtest_2[1:(length(pred_gp_sd_bs_backtest_2)-1)]
 
-# ----------------------------------
+----------------------------------
 #Computing Mean
 y_predict_values_bs_backtest_3 <- extract(pred_gp_bs_backtest_3,permuted=FALSE)
 y_mean_values_bs_backtest_3 <- c(colMeans(y_predict_values_bs_backtest_3))
@@ -1432,7 +1418,7 @@ pred_gp_summary_bs_backtest_3 <- summary(pred_gp_bs_backtest_3, sd=c("sd"))$summ
 pred_gp_sd_bs_backtest_3 <- pred_gp_summary_bs_backtest_3[, c("sd")]
 y_sd_values_bs_backtest_3 <- pred_gp_sd_bs_backtest_3[1:(length(pred_gp_sd_bs_backtest_3)-1)]
 
-# ----------------------------------
+----------------------------------
 #Computing Mean
 y_predict_values_bs_backtest_4 <- extract(pred_gp_bs_backtest_4,permuted=FALSE)
 y_mean_values_bs_backtest_4 <- c(colMeans(y_predict_values_bs_backtest_4))
@@ -1443,7 +1429,7 @@ pred_gp_summary_bs_backtest_4 <- summary(pred_gp_bs_backtest_4, sd=c("sd"))$summ
 pred_gp_sd_bs_backtest_4 <- pred_gp_summary_bs_backtest_4[, c("sd")]
 y_sd_values_bs_backtest_4 <- pred_gp_sd_bs_backtest_4[1:(length(pred_gp_sd_bs_backtest_4)-1)]
 
-# ----------------------------------
+----------------------------------
 #Computing Mean
 y_predict_values_bs_backtest_5 <- extract(pred_gp_bs_backtest_5,permuted=FALSE)
 y_mean_values_bs_backtest_5 <- c(colMeans(y_predict_values_bs_backtest_5))
@@ -1467,7 +1453,7 @@ ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_1),y=log(cbind(stan_dat$total
 
 MSE(y_mean_values_bs_backtest_1,cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_1:test_end_backtest_1])[c(match(IDs_1,today_data_1))])
 
-# -----------------------------
+-----------------------------
 ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_2),y=log(cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_2:test_end_backtest_2])[c(match(IDs_2,today_data_2))]))) +
   geom_point() +
   labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
@@ -1479,7 +1465,7 @@ ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_2),y=log(cbind(stan_dat$total
 
 MSE(y_mean_values_bs_backtest_2,cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_2:test_end_backtest_2])[c(match(IDs_2,today_data_2))])
 
-# -----------------------------
+-----------------------------
 ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_3),y=log(cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_3:test_end_backtest_3])[c(match(IDs_3,today_data_3))]))) +
   geom_point() +
   labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
@@ -1491,7 +1477,7 @@ ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_3),y=log(cbind(stan_dat$total
 
 MSE(y_mean_values_bs_backtest_3,cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_3:test_end_backtest_3])[c(match(IDs_3,today_data_3))])
 
-# -----------------------------
+-----------------------------
 ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_4),y=log(cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_4:test_end_backtest_4])[c(match(IDs_4,today_data_4))]))) +
   geom_point() +
   labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
@@ -1503,7 +1489,7 @@ ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_4),y=log(cbind(stan_dat$total
 
 MSE(y_mean_values_bs_backtest_4,cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_4:test_end_backtest_4])[c(match(IDs_4,today_data_4))])
 
-# -----------------------------
+-----------------------------
 ggplot(mapping=aes(x=log(y_mean_values_bs_backtest_5),y=log(cbind(stan_dat$total_puts_American$mid_price[test_start_backtest_5:test_end_backtest_5])[c(match(IDs_5,today_data_5))]))) +
   geom_point() +
   labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
@@ -1524,22 +1510,22 @@ BS_Delta_1 <- greeks(bsput(s=as.numeric(x2_bs_backtest_1[,1]), k=as.numeric(x2_b
 
 BS_Delta_1
 
-# -----------------------
+-----------------------
 BS_Delta_2 <- greeks(bsput(s=as.numeric(x2_bs_backtest_2[,1]), k=as.numeric(x2_bs_backtest_2[,2]), v=as.numeric(x2_bs_backtest_2[,3]), r=as.numeric(x2_bs_backtest_2[,6]), tt=as.numeric(x2_bs_backtest_2[,4]), d=as.numeric(x2_bs_backtest_2[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
 
 BS_Delta_2
 
-# -----------------------\
+-----------------------
 BS_Delta_3 <- greeks(bsput(s=as.numeric(x2_bs_backtest_3[,1]), k=as.numeric(x2_bs_backtest_3[,2]), v=as.numeric(x2_bs_backtest_3[,3]), r=as.numeric(x2_bs_backtest_3[,6]), tt=as.numeric(x2_bs_backtest_3[,4]), d=as.numeric(x2_bs_backtest_3[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
 
 BS_Delta_3
 
-# -----------------------
+-----------------------
 BS_Delta_4 <- greeks(bsput(s=as.numeric(x2_bs_backtest_4[,1]), k=as.numeric(x2_bs_backtest_4[,2]), v=as.numeric(x2_bs_backtest_4[,3]), r=as.numeric(x2_bs_backtest_4[,6]), tt=as.numeric(x2_bs_backtest_4[,4]), d=as.numeric(x2_bs_backtest_4[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
 
 BS_Delta_4
 
-# -----------------------
+-----------------------
 BS_Delta_5 <- greeks(bsput(s=as.numeric(x2_bs_backtest_5[,1]), k=as.numeric(x2_bs_backtest_5[,2]), v=as.numeric(x2_bs_backtest_5[,3]), r=as.numeric(x2_bs_backtest_5[,6]), tt=as.numeric(x2_bs_backtest_5[,4]), d=as.numeric(x2_bs_backtest_5[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
 
 BS_Delta_5
@@ -1570,7 +1556,7 @@ vector_k_1 <- matrix(vector_k_values_1, nrow(x2_backtest_1), nrow(stan_dat$x), b
 BSGP_Delta_1 <- BS_Delta_1 + vector_k_1 %*% vector_c_values_1
 
 
-# --------------------------------
+--------------------------------
 vector_c_values_2 <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American_backtest_2,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
 
@@ -1587,11 +1573,11 @@ vector_k_values_2 <- c(colMeans(vector_k_values_2))
 vector_k_values_2 <- vector_k_values_2[1:(length(vector_k_values_2)-1)]
 
 
-vector_k_2 <- matrix(vector_k_values_2, nrow(x2_backtest_2), nrow(stan_dat_2$x), byrow=FALSE)
+vector_k_2 <- matrix(vector_k_values_2, nrow(x2_backtest_2), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta_2 <- BS_Delta_2 + vector_k_2 %*% vector_c_values_2
 
-# --------------------------------
+--------------------------------
 vector_c_values_3 <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American_backtest_3,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
 
@@ -1608,11 +1594,11 @@ vector_k_values_3 <- c(colMeans(vector_k_values_3))
 vector_k_values_3 <- vector_k_values_3[1:(length(vector_k_values_3)-1)]
 
 
-vector_k_3 <- matrix(vector_k_values_3, nrow(x2_backtest_3), nrow(stan_dat_3$x), byrow=FALSE)
+vector_k_3 <- matrix(vector_k_values_3, nrow(x2_backtest_3), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta_3 <- BS_Delta_3 + vector_k_3 %*% vector_c_values_3
 
-# --------------------------------
+--------------------------------
 vector_c_values_4 <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American_backtest_4,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
 
@@ -1629,11 +1615,11 @@ vector_k_values_4 <- c(colMeans(vector_k_values_4))
 vector_k_values_4 <- vector_k_values_4[1:(length(vector_k_values_4)-1)]
 
 
-vector_k_4 <- matrix(vector_k_values_4, nrow(x2_backtest_4), nrow(stan_dat_4$x), byrow=FALSE)
+vector_k_4 <- matrix(vector_k_values_4, nrow(x2_backtest_4), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta_4 <- BS_Delta_4 + vector_k_4 %*% vector_c_values_4
 
-# --------------------------------
+--------------------------------
 vector_c_values_5 <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American_backtest_5,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
 
@@ -1650,7 +1636,7 @@ vector_k_values_5 <- c(colMeans(vector_k_values_5))
 vector_k_values_5 <- vector_k_values_5[1:(length(vector_k_values_5)-1)]
 
 
-vector_k_5 <- matrix(vector_k_values_5, nrow(x2_backtest_5), nrow(stan_dat_5$x), byrow=FALSE)
+vector_k_5 <- matrix(vector_k_values_5, nrow(x2_backtest_5), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta_5 <- BS_Delta_5 + vector_k_5 %*% vector_c_values_5
 ```
@@ -1658,18 +1644,16 @@ BSGP_Delta_5 <- BS_Delta_5 + vector_k_5 %*% vector_c_values_5
 9-5 Choosing which options to use
 
 ```{r}
-hist(BS_Delta_1-BSGP_Delta_1)
-plot(BS_Delta_1,BSGP_Delta_1)
-abline(intercept = 0, slope = 1)
-selected_options <- sort(BS_Delta_1-BSGP_Delta, index.return=TRUE, decreasing=TRUE)$ix[1]
-BSGP_Delta[c(selected_options)]
-BS_Delta[c(selected_options)]
+# hist(BS_Delta-BSGP_Delta)
+# selected_options <- sort(BS_Delta-BSGP_Delta, index.return=TRUE, decreasing=TRUE)$ix[1]
+# BSGP_Delta[c(selected_options)]
+# BS_Delta[c(selected_options)]
 
 # BSGP_Delta_portfolio <- sum(BSGP_Delta[c(selected_options)])
 # BS_Delta_portfolio <- sum(BS_Delta[c(selected_options)])
-# 
-# BSGP_Delta_portfolio_1 <- sum(BSGP_Delta_1)
-# BS_Delta_portfolio_1 <- sum(BS_Delta_1)
+
+BSGP_Delta_portfolio_1 <- sum(BSGP_Delta_1)
+BS_Delta_portfolio_1 <- sum(BS_Delta_1)
 
 ##Assuming we hedge with the SPY closing price
 ##6/10 closing price for SPY: 288.97
@@ -1685,74 +1669,7 @@ BS_portfolio_value_change_1 <- (sum(tmr_option_price_1$mid_price)-sum(today_opti
 BSGP_portfolio_value_change_1
 BS_portfolio_value_change_1
 
-# --------------------------------------
-BSGP_Delta_portfolio_2 <- sum(BSGP_Delta_2)
-BS_Delta_portfolio_2 <- sum(BS_Delta_2)
-
-BSGP_hedge_cost_2 <- 288.9*abs(BSGP_Delta_portfolio_2)*100
-BS_hedge_cost_2 <- 288.9*abs(BS_Delta_portfolio_2)*100
-
-BSGP_portfolio_value_change_2 <- (sum(tmr_option_price_2$mid_price)-sum(today_option_price_2$mid_price)) + ((288.39-288.9)*abs(BSGP_Delta_portfolio_2)*100)
-
-BS_portfolio_value_change_2 <- (sum(tmr_option_price_2$mid_price)-sum(today_option_price_2$mid_price)) + ((288.39-288.9)*abs(BS_Delta_portfolio_2)*100)
-
-BSGP_portfolio_value_change_2
-BS_portfolio_value_change_2
-# --------------------------------------
-BSGP_Delta_portfolio_3 <- sum(BSGP_Delta_3)
-BS_Delta_portfolio_3 <- sum(BS_Delta_3)
-
-BSGP_hedge_cost_3 <- 288.39*abs(BSGP_Delta_portfolio_3)*100
-BS_hedge_cost_3 <- 288.39*abs(BS_Delta_portfolio_3)*100
-
-BSGP_portfolio_value_change_3 <- (sum(tmr_option_price_3$mid_price)-sum(today_option_price_3$mid_price)) + ((289.58-288.39)*abs(BSGP_Delta_portfolio_3)*100)
-
-BS_portfolio_value_change_3 <- (sum(tmr_option_price_3$mid_price)-sum(today_option_price_3$mid_price)) + ((289.58-288.39)*abs(BS_Delta_portfolio_3)*100)
-
-BSGP_portfolio_value_change_3
-BS_portfolio_value_change_3
-
-# --------------------------------------
-BSGP_Delta_portfolio_4 <- sum(BSGP_Delta_4)
-BS_Delta_portfolio_4 <- sum(BS_Delta_4)
-
-BSGP_hedge_cost_4 <- 289.58*abs(BSGP_Delta_portfolio_4)*100
-BS_hedge_cost_4 <- 289.58*abs(BS_Delta_portfolio_4)*100
-
-BSGP_portfolio_value_change_4 <- (sum(tmr_option_price_4$mid_price)-sum(today_option_price_4$mid_price)) + ((289.26-289.58)*abs(BSGP_Delta_portfolio_4)*100)
-
-BS_portfolio_value_change_4 <- (sum(tmr_option_price_4$mid_price)-sum(today_option_price_4$mid_price)) + ((289.26-289.58)*abs(BS_Delta_portfolio_4)*100)
-
-BSGP_portfolio_value_change_4
-BS_portfolio_value_change_4
-
-# --------------------------------------
-BSGP_Delta_portfolio_5 <- sum(BSGP_Delta_5)
-BS_Delta_portfolio_5 <- sum(BS_Delta_5)
-
-
-
-BSGP_hedge_cost_5 <- 289.26*abs(BSGP_Delta_portfolio_5)*100
-BS_hedge_cost_5 <- 289.26*abs(BS_Delta_portfolio_5)*100
-
-BSGP_portfolio_value_change_5 <- (sum(tmr_option_price_5$mid_price)-sum(today_option_price_5$mid_price)) + ((289.37-289.26)*abs(BSGP_Delta_portfolio_5)*100)
-
-BS_portfolio_value_change_5 <- (sum(tmr_option_price_5$mid_price)-sum(today_option_price_5$mid_price)) + ((289.37-289.26)*abs(BS_Delta_portfolio_5)*100)
-
-BSGP_portfolio_value_change_5
-BS_portfolio_value_change_5
-
-#-------
-BSGP_portfolio_value_change <- BSGP_portfolio_value_change_1 + BSGP_portfolio_value_change_2 + BSGP_portfolio_value_change_3 + BSGP_portfolio_value_change_4 + BSGP_portfolio_value_change_5
-BS_portfolio_value_change <- BS_portfolio_value_change_1 + BS_portfolio_value_change_2 + BS_portfolio_value_change_3 + BS_portfolio_value_change_4 + BS_portfolio_value_change_5
-
-BSGP_portfolio_value_change
-BS_portfolio_value_change
-
-#one week of training June 3~7th
-#1) predict BSGP June 10th to hedge June 11th
-#2) use BSGP June 3~7th, 10th to train then predict June 11th BSGP to hedge June 12th
-
+##Problem is that there is no way to figure out if positive discrepancy is better or if negative discrepancy is better!!!!
 ```
 
 
@@ -1891,17 +1808,13 @@ ggplot(mapping=aes(x=DAD_data[,1],y=Training_option_price, color = DAD_values)) 
 
 ```
 
+##Averaging out delta-hedge performance -> delta hedge for one week then average the profit/loss of the delta hedge for the test week
+
+##Will need to add each passed day into the training data for the BSGP model when delta hediging for the test week
+
 ##Prove the point of delta hedging(why use delta hedging with graphs)
 
 ##EDITS on JBES - cutting down on section 4
 
 ##4.5 - 3d plot of discrepancy and 2 variables (Ref photo) see if confidence interval includes 0. 2 plots -> 1st is just the discrepancy in 3d, 2nd is width of confidence interval in 3d + color code the plots as well.
 
-#Code in SPY to automate the hedge test
-
-#Make potential adjustments to the strategy-think about which options would've made a profit using the BSGP and figure out a way to choose them
-#try different training week
-#Scatterplot coded with where biggest absolute discrepancy
-#Scatterplot color coded with uncertainty based on predictions
-#Maybe try out the carry on for a week
-##Polish up to section 3 - Clara (in 3 days)
