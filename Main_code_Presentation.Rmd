@@ -449,7 +449,7 @@ persp(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), ph
 #Contour of Variance
 # contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
 # points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Impl_vol & Time_to_Exp)")
+# persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Impl_vol & Time_to_Exp)")
 ```
 
 5-3: Contour Plots of Strike Price and Implied Volatility
@@ -543,7 +543,7 @@ par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
 # contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 # points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(blackschoels_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
+persp(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
 #Contour of Variance
 # contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 # points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
@@ -1661,9 +1661,9 @@ BSGP_Delta_5 <- BS_Delta_5 + vector_k_5 %*% vector_c_values_5
 hist(BS_Delta_1-BSGP_Delta_1)
 plot(BS_Delta_1,BSGP_Delta_1)
 abline(intercept = 0, slope = 1)
-selected_options <- sort(BS_Delta_1-BSGP_Delta, index.return=TRUE, decreasing=TRUE)$ix[1]
-BSGP_Delta[c(selected_options)]
-BS_Delta[c(selected_options)]
+selected_options <- sort(BS_Delta_1-BSGP_Delta_1, index.return=TRUE, decreasing=TRUE)$ix[1]
+BSGP_Delta_1[c(selected_options)]
+BS_Delta_1[c(selected_options)]
 
 # BSGP_Delta_portfolio <- sum(BSGP_Delta[c(selected_options)])
 # BS_Delta_portfolio <- sum(BS_Delta[c(selected_options)])
@@ -1904,4 +1904,3 @@ ggplot(mapping=aes(x=DAD_data[,1],y=Training_option_price, color = DAD_values)) 
 #Scatterplot coded with where biggest absolute discrepancy
 #Scatterplot color coded with uncertainty based on predictions
 #Maybe try out the carry on for a week
-##Polish up to section 3 - Clara (in 3 days)
