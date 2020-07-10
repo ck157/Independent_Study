@@ -323,11 +323,32 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
 
+
+# Color palette (100 colors)
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-  matrix(y_mean_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+
 library(base)
-persp(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45,col="gray",shade=0.4,xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "SGP Means (Spot Price & Strike Price)")
+persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "SGP Means (Spot Price & Strike Price)")
 
 #Contour of Variance
-persp(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 135, col="gray",shade=0.4,xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "SGP Standard Deviation (Spot Price & Strike Price)")
+col.pal<-colorRampPalette(c("blue", "yellow"))
+colors<-col.pal(100)
+z <-  matrix(y_sd_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 135,  border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "SGP Standard Deviation (Spot Price & Strike Price)")
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -341,22 +362,41 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45,col="gray",shade=0.4, xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BSGP Average Price (Spot Price & Strike Price)")
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-  matrix(y_mean_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BSGP Means (Spot Price & Strike Price)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BS_GP Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 135, col="gray",shade=0.4,xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Spot Price & Strike Price)")
+col.pal<-colorRampPalette(c("blue", "yellow"))
+colors<-col.pal(100)
+z <-   matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 135, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Spot Price & Strike Price)")
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex = 2, main = "Black-Scholes Means in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45, col="gray",shade=0.4,xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BlackScholes Average Price (Spot Price & Strike Price)")
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-   matrix(blackscholes_test_cont, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BlackScholes Average Price (Spot Price & Strike Price)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-# persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Spot Price & Strike Price)")
+
 ```
 
 5-2: Contour Plots of Implied Volatility & Time to Expiration
@@ -418,13 +458,23 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, col="gray",shade=0.4, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "SGP Average Price (Impl_vol & Time_to_Exp)")
+z <-  matrix(y_mean_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z,phi = 45, theta = 180, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "SGP Average Price (Impl_vol & Time_to_Exp)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, col="gray",shade=0.4, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "SGP Standard Deviation (Impl_vol & Time_to_Exp)")
+z <-  matrix(y_sd_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "SGP Standard Deviation (Impl_vol & Time_to_Exp)")
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -438,23 +488,35 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45, col="gray",shade=0.4, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "BSGP Average Price (Impl_vol & Time_to_Exp)")
+z <-  matrix(y_mean_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "BSGP Average Price (Impl_vol & Time_to_Exp)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45,  col="gray",shade=0.4,xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Impl_vol & Time_to_Exp)")
+z <-  matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Impl_vol & Time_to_Exp)")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45,  col="gray",shade=0.4,xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "Blackscholes Average Price (Impl_vol & Time_to_Exp)")
+z <-  matrix(blackscholes_test_cont, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "Blackscholes Average Price (Impl_vol & Time_to_Exp)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-# persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Impl_vol & Time_to_Exp)")
 ```
 
 5-3: Contour Plots of Strike Price and Implied Volatility
@@ -516,13 +578,23 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45,  col="gray",shade=0.4,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "SGP Average Price (Strike Price & Impl_vol)")
+z <- matrix(y_mean_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "SGP Average Price (Strike Price & Impl_vol)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), labcex =1.5, main = "SGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_SGP, length(dim1), length(dim2)), phi = 45, theta = 45, col="gray",shade=0.4, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "SGP Standard Deviation (Strike Price & Impl_vol)")
+z <-  matrix(y_sd_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "SGP Standard Deviation (Strike Price & Impl_vol)")
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -536,19 +608,34 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_mean_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45,  col="gray",shade=0.4,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "BSGP Average Price (Strike Price & Impl_vol)")
+z <-  matrix(y_mean_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed" ,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "BSGP Average Price (Strike Price & Impl_vol)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), labcex =1.5, main = "BSGP Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(y_sd_values_cont_bs, length(dim1), length(dim2)), phi = 45, theta = 45,  col="gray",shade=0.4,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Strike Price & Impl_vol)")
+z <-  matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z,phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Strike Price & Impl_vol)")
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-# contour(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Means in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-persp(dim1, dim2, matrix(blackscholes_test_cont, length(dim1), length(dim2)), phi = 45, theta = 45,  col="gray",shade=0.4,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
+z <-  matrix(blackscholes_test_cont, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z , phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
 #Contour of Variance
 # contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
 # points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
@@ -687,8 +774,17 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1.5, main = "Discrepancy Modeled in 2D (Spot Price & Strike Price)", xlab= "Spot Price", ylab="Strike Price")
-points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+col.pal<-colorRampPalette(c("red", "yellow"))
+colors<-col.pal(100)
+z <- matrix(Discrepancy_function, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z , phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab= "Spot Price", ylab="Strike Price", zlab = "Average Price", main = "Discrepancy Modeled in 3D (Spot Price & Strike Price)")
+
 ```
 
 7-3: Discrepancy Contour Plots of Implied Volatility & Time to Expiration
@@ -748,8 +844,15 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1.5, main = "Discrepancy Modeling in 2D (Impl_vol & Time_to_Exp)", xlab= "Implied Volatility", ylab="Time to Expiration")
-points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+z <- matrix(Discrepancy_function, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z , phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab= "Implied Volatility", ylab="Time to Expiration", zlab = "Average Price", main = "Discrepancy Modeling in 3D (Impl_vol & Time_to_Exp)")
+
 ```
 
 7-4: Discrepancy Contour Plots of Strike Price & Implied Volatility
@@ -809,8 +912,16 @@ Discrepancy_function <- y_mean_values_cont_bs - blackscholes_test_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-contour(dim1, dim2, matrix(Discrepancy_function, length(dim1), length(dim2)), labcex =1.5, main = "Discrepancy Modeling in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+
+z <- matrix(Discrepancy_function, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z , phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab= "Strike Price", ylab="Implied Volatility", zlab = "Average Price", main ="Discrepancy Modeling in 3D (Strike Price & Impl_vol)")
+
 ```
 
 ##Part 8: Other Machine Learning Methods
@@ -1104,14 +1215,14 @@ test_start_backtest_1 <- 323 #Start of 06/10 Puts
 test_end_backtest_1 <- 393 # End of 06/10 Puts
 
 
-tmr_options_1 <- stan_dat$total_puts_American[tmr_start_backtest_1:tmr_end_backtest_1,]
-today_options_1 <- stan_dat$total_puts_American[test_start_backtest_1:test_end_backtest_1,]
+# tmr_options_1 <- stan_dat$total_puts_American[tmr_start_backtest_1:tmr_end_backtest_1,]
+# today_options_1 <- stan_dat$total_puts_American[test_start_backtest_1:test_end_backtest_1,]
 ```
 
 ```{r}
 #filtering out options that are present both today and tmr
-tmr_data_1 <- stan_dat$total_puts_American$optionid[tmr_start_backtest_1:tmr_end_backtest_1]
-today_data_1 <- stan_dat$total_puts_American$optionid[test_start_backtest_1:test_end_backtest_1]
+# tmr_data_1 <- stan_dat$total_puts_American$optionid[tmr_start_backtest_1:tmr_end_backtest_1]
+# today_data_1 <- stan_dat$total_puts_American$optionid[test_start_backtest_1:test_end_backtest_1]
 
 # IDs_1<- unique(today_data_1[today_data_1%in%tmr_data_1])
 ```
@@ -1806,44 +1917,181 @@ ggplot(mapping = aes(x=IC)) + geom_histogram()+
   theme_bw() +
   theme(text=element_text(size=16))
 
-High_DAD <- c()
-for (number in IC){
-  if (number > unname(quantile(IC)[4])){
-    High_DAD <- append(High_DAD,number)
-  }
-}
+# High_DAD <- c()
+# for (number in IC){
+#   if (number > unname(quantile(IC)[4])){
+#     High_DAD <- append(High_DAD,number)
+#   }
+# }
+# 
+# Low_DAD <- c()
+# for (number in IC){
+#   if (number < unname(quantile(IC)[2])){
+#     Low_DAD <- append(Low_DAD,number)
+#   }
+# }
 
+Lowest_DAD <- c()
 Low_DAD <- c()
+High_DAD <- c()
+Highest_DAD <- c()
+
 for (number in IC){
   if (number < unname(quantile(IC)[2])){
-    Low_DAD <- append(Low_DAD,number)
+    Lowest_DAD <- append(Lowest_DAD,number)
+  }
+  else if (number < unname(quantile(IC)[3])){
+    Low_DAD <- append(Low_DAD, number)
+  }
+  else if (number < unname(quantile(IC)[4])){
+    High_DAD <- append(High_DAD, number)
+  }
+  else {
+    Highest_DAD <- append(Highest_DAD, number)
   }
 }
+Lowest_DAD
+Low_DAD
+High_DAD
+Highest_DAD
 
-High_DAD_data <- stan_dat$x[match(High_DAD,IC),]
-Low_DAD_data <- stan_dat$x[match(Low_DAD,IC),]
-DAD_data <- rbind(High_DAD_data,Low_DAD_data) 
-DAD_values <- c(rep(1,times=length(High_DAD)), rep(0,times=length(Low_DAD)))
+Highest_data <- stan_dat$x[match(Highest_DAD, IC),]
+Highest_data <- as.data.frame(Highest_data)
+Highest_data$DAD <- "Highest_DAD"
 
-Training_option_price <- append(stan_dat$y[match(High_DAD,IC)], stan_dat$y[match(Low_DAD,IC)])
+High_data <- stan_dat$x[match(High_DAD, IC),]
+High_data <- as.data.frame(High_data)
+High_data$DAD <-"High_DAD"
+
+Low_data <- stan_dat$x[match(Low_DAD, IC),]
+Low_data <- as.data.frame(Low_data)
+Low_data$DAD <- "Low_DAD"
+
+Lowest_data <- stan_dat$x[match(Lowest_DAD, IC),]
+Lowest_data <- as.data.frame(Lowest_data)
+Lowest_data$DAD <- "Lowest_DAD"
+
+DAD_data <- rbind(Highest_data, High_data, Low_data, Lowest_data)
+DAD_data <- DAD_data %>% 
+  rename(
+    Spot_Price = x_1,
+    Strike_Price = x_2,
+    Implied_Volatility = x_3,
+    Time_to_Expiration = x_4,
+    Dividend_Yield = x_5,
+    Interest_Rate = x_6
+  )
+DAD_data$DAD <- as.factor(DAD_data$DAD)
+
+# High_DAD_data <- stan_dat$x[match(High_DAD,IC),]
+# Low_DAD_data <- stan_dat$x[match(Low_DAD,IC),]
+# DAD_data <- rbind(High_DAD_data,Low_DAD_data) 
+# DAD_values <- c(rep(1,times=length(High_DAD)), rep(0,times=length(Low_DAD)))
+# 
+# Training_option_price <- append(stan_dat$y[match(High_DAD,IC)], stan_dat$y[match(Low_DAD,IC)])
+Training_option_price <- stan_dat$y
+
 ```
+
+1) Simple Classification Tree
+
+```{r}
+library(tree)
+
+tree.DAD <- tree(DAD ~ ., DAD_data)
+summary(tree.DAD)
+plot(tree.DAD)
+text(tree.DAD, pretty = 0)
+tree.DAD
+```
+
+2) Pruned Tree
+
+```{r}
+set.seed(3)
+cv.DAD <- cv.tree(tree.DAD, FUN = prune.misclass)
+names(cv.DAD)
+cv.DAD
+
+par(mfrow = c(1,2))
+plot(cv.DAD$size, cv.DAD$dev, type = "b")
+plot(cv.DAD$k, cv.DAD$dev, type = "b")
+
+prune.DAD <- prune.misclass(tree.DAD, best = 5)
+plot(prune.DAD)
+text(prune.DAD, pretty = 0)
+```
+
+3) Bagging 
+
+```{r}
+library(randomForest)
+set.seed(1)
+bag.DAD <- randomForest(DAD ~ ., data = DAD_data, mtry = 6, importance = TRUE, ntree=25)
+bag.DAD
+
+importance(bag.DAD)
+varImpPlot(bag.DAD)
+```
+
+4) Random Forest
+
+```{r}
+set.seed(6)
+rf.DAD <- randomForest(DAD ~ ., data = DAD_data, mtry = 2, importance = TRUE)
+rf.DAD
+
+importance(rf.DAD)
+varImpPlot(rf.DAD)
+
+```
+
+
 
 Try out decision tree/classification tree after dividing the DADs into two groups "High DAD" & "Low DAD" by median, maybe even random forest or more -> trying to visualize where the data is influential
 
 10-2 Color Coded Map of Influence Coefficient
 
 ```{r}
-x.grid_1_cont <- as.numeric(stan_dat$x[,1])
-x.grid_2_cont <- as.numeric(stan_dat$x[,2])
+x.grid_1_cont <- DAD_data$Spot_Price
+x.grid_2_cont <- DAD_data$Strike_Price
 
 dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
 dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
-persp(dim1, dim2, matrix(IC, length(dim1), length(dim2)), phi = 45, theta = 45,  col="blue",shade=0.8,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
+
+col.pal<-colorRampPalette(c("red", "green"))
+colors<-col.pal(100)
+z <- matrix(DAD_data$DAD, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Spot Price", ylab = "Strike Price", zlab = "DAD", main = "DAD Values (Strike Price & Impl_vol)")
+
+x.grid_1_cont <- DAD_data$Spot_Price
+x.grid_2_cont <- DAD_data$Implied_Volatility
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+
+z <- matrix(DAD_data$DAD, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Spot Price", ylab = "Implied Volatility", zlab = "DAD", main = "DAD Values (Spot Price & Impl_vol)")
 
 # library(grid)
 # grid.newpage()
 #Spot vs Strike
-ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,2], color = DAD_values)) +
+
+DAD_data$DAD <- as.numeric(DAD_data$DAD)
+
+ggplot(DAD_data, mapping=aes(x=Implied_Volatility,y=Dividend_Yield, color = DAD)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Strike",
        x = "Spot Price",
@@ -1853,7 +2101,7 @@ ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,2], color = DAD_values)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Implied Volatility
-ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,3], color = DAD_values)) +
+ggplot(DAD_data, mapping=aes(x=Spot_Price,y=Implied_Volatility, color = DAD)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Implied Volatility",
        x = "Spot Price",
@@ -1863,7 +2111,7 @@ ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,3], color = DAD_values)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Time to Expiration
-ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,4], color = DAD_values)) +
+ggplot(DAD_data, mapping=aes(x=Spot_Price,y=Time_to_Expiration, color = DAD)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Time to Expiration",
        x = "Spot Price",
@@ -1873,7 +2121,7 @@ ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,4], color = DAD_values)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Dividend Yield
-ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,5], color = DAD_values)) +
+ggplot(DAD_data, mapping=aes(x=Spot_Price,y=Dividend_Yield, color = DAD)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Dividend Yield",
        x = "Spot Price",
@@ -1883,7 +2131,7 @@ ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,5], color = DAD_values)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Interest Rate
-ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,6], color = DAD_values)) +
+ggplot(DAD_data, mapping=aes(x=Spot_Price,y=Interest_Rate, color = DAD)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Interest Rate",
        x = "Spot Price",
@@ -1893,7 +2141,7 @@ ggplot(mapping=aes(x=DAD_data[,1],y=DAD_data[,6], color = DAD_values)) +
   scale_colour_gradient(low="blue", high="red")
 
 #Spot vs Option Price
-ggplot(mapping=aes(x=DAD_data[,1],y=Training_option_price, color = DAD_values)) +
+ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_data$DAD)) +
   geom_point(size = 2) +
   labs(title = "Influence Coefficient in Training Data - Spot vs Option Price",
        x = "Spot Price",
@@ -1904,6 +2152,16 @@ ggplot(mapping=aes(x=DAD_data[,1],y=Training_option_price, color = DAD_values)) 
 
 ```
 
-##EDITS on JBES - cutting down on section 4
 
-##4.5 - 3d plot of discrepancy and 2 variables (Ref photo) see if confidence interval includes 0. 2 plots -> 1st is just the discrepancy in 3d, 2nd is width of confidence interval in 3d + color code the plots as well.
+##Maybe try for 2018 data, or other periods -> prove that the model is robust enough (what is the good amount of training trials to prove it is robust)
+##Maybe try 1 year oR monthly rebalancing and compare performance wit hBS delta-hedged portfiolo
+
+##What does the DAD really mean in financial aspect -> the idea of sensitivity of the training data points to the model means WHAT???
+
+##Complete Section 4 with DAD analysis - classification model (TREES(boosting,rf,bagging) aand then generate importance plots or interpret results, multinomial model and fit with response of 0,1,2,3 of DAD quantiles) (https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/) maybe use AIC,BIC for model selection
+
+#where can swe submit (journal) the delta-hedge paper journal - separate this part into separate overleaf file. 
+
+##delta-hedging -> bs holds unrealistic assumptions which is why the disparity is larger for long-term.
+
+#how to choose whcih options to use for delta hedging (https://en.wikipedia.org/wiki/Multi-armed_bandit)
