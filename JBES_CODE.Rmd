@@ -1909,8 +1909,11 @@ ggplot() +
 10-1 Distribution of Influence Coefficient
 
 ```{r}
+DAD <- abs(unlist(vector_k_1 %*% exp_vector_c_values_1))
+
 IC <- abs(exp_vector_c_values_1)
-ggplot(mapping = aes(x=IC)) + geom_histogram()+
+
+ggplot(mapping = aes(x=DAD)) + geom_histogram()+
   labs(title = "Distribution of Influence Coefficient",
        x = "Values of Influence Coefficient",
        y = "Frequency") +
@@ -1936,14 +1939,14 @@ Low_DAD <- c()
 High_DAD <- c()
 Highest_DAD <- c()
 
-for (number in IC){
-  if (number < unname(quantile(IC)[2])){
+for (number in DAD){
+  if (number < unname(quantile(DAD)[2])){
     Lowest_DAD <- append(Lowest_DAD,number)
   }
-  else if (number < unname(quantile(IC)[3])){
+  else if (number < unname(quantile(DAD)[3])){
     Low_DAD <- append(Low_DAD, number)
   }
-  else if (number < unname(quantile(IC)[4])){
+  else if (number < unname(quantile(DAD)[4])){
     High_DAD <- append(High_DAD, number)
   }
   else {
@@ -1955,19 +1958,19 @@ Low_DAD
 High_DAD
 Highest_DAD
 
-Highest_data <- stan_dat$x[match(Highest_DAD, IC),]
+Highest_data <- stan_dat$x[match(Highest_DAD, DAD),]
 Highest_data <- as.data.frame(Highest_data)
 Highest_data$DAD <- "Highest_DAD"
 
-High_data <- stan_dat$x[match(High_DAD, IC),]
+High_data <- stan_dat$x[match(High_DAD, DAD),]
 High_data <- as.data.frame(High_data)
 High_data$DAD <-"High_DAD"
 
-Low_data <- stan_dat$x[match(Low_DAD, IC),]
+Low_data <- stan_dat$x[match(Low_DAD, DAD),]
 Low_data <- as.data.frame(Low_data)
 Low_data$DAD <- "Low_DAD"
 
-Lowest_data <- stan_dat$x[match(Lowest_DAD, IC),]
+Lowest_data <- stan_dat$x[match(Lowest_DAD, DAD),]
 Lowest_data <- as.data.frame(Lowest_data)
 Lowest_data$DAD <- "Lowest_DAD"
 
@@ -2017,9 +2020,11 @@ par(mfrow = c(1,2))
 plot(cv.DAD$size, cv.DAD$dev, type = "b")
 plot(cv.DAD$k, cv.DAD$dev, type = "b")
 
-prune.DAD <- prune.misclass(tree.DAD, best = 5)
+prune.DAD <- prune.misclass(tree.DAD, best = 4)
 plot(prune.DAD)
 text(prune.DAD, pretty = 0)
+
+0.7503*(max(stan_dat$total_puts_American$impl_volatility)-min(stan_dat$total_puts_American$impl_volatility))+min(stan_dat$total_puts_American$impl_volatility)
 ```
 
 3) Bagging 
@@ -2165,3 +2170,15 @@ ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_da
 ##delta-hedging -> bs holds unrealistic assumptions which is why the disparity is larger for long-term.
 
 #how to choose whcih options to use for delta hedging (https://en.wikipedia.org/wiki/Multi-armed_bandit)
+
+#change equation 17 and 18 to match notation
+
+#DAD analysis X -> JBES
+
+#do same process for deltas (computing, predictive uncertainty, DAD)
+#Novelty of the model (combines both shitty approaches data-driven and model-driven) -> predicting delta(this is even unobserved)
+#include content on this to JBES 
+#we can compute sth unobserved in data just with price!!!! AMAZING!!
+#Get rid of DAD name
+
+#Morris paper to calculaute predictive uncertainty for delta values
