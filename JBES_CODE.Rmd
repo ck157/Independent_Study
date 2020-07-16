@@ -1192,18 +1192,382 @@ for (row in 1:nrow(data.frame(x2_bs))){
 post_data_bs_American <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2,N1=length(stan_dat$x[,1]),N2=length(x2[,1]), bs = blackscholes_test,variables = 6)
 # post_data
 
-pred_gp_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_bs_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+```
+
+```{r}
+library(derivmkts)
+BS_Delta <- greeks(bsput(s=as.numeric(x2_bs[,1]), k=as.numeric(x2_bs[,2]), v=as.numeric(x2_bs[,3]), r=as.numeric(x2_bs[,6]), tt=as.numeric(x2_bs[,4]), d=as.numeric(x2_bs[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
+
+BS_Delta
+```
+
+```{r}
+vector_c_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_bs_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+exp_vector_c_values <- extract(vector_c_values,permuted=FALSE)
+exp_vector_c_values <- c(colMeans(exp_vector_c_values))
+exp_vector_c_values <- exp_vector_c_values[1:(length(exp_vector_c_values)-1)]
+
+
+vector_k_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan", data=post_data_bs_American,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+exp_vector_k_values <- extract(vector_k_values,permuted=FALSE)
+exp_vector_k_values <- c(colMeans(exp_vector_k_values))
+exp_vector_k_values <- exp_vector_k_values[1:(length(exp_vector_k_values)-1)]
+
+
+vector_k <- matrix(exp_vector_k_values, nrow(x2), nrow(stan_dat$x), byrow=FALSE)
+
+BSGP_Delta <- BS_Delta + vector_k %*% exp_vector_c_values
+
+```
+
+```{r}
+ggplot(mapping=aes(x=abs(BS_Delta),y=abs(stan_dat$total_puts_American$delta[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - Black-Scholes",
+       x = "Predicted Delta",
+       y = "Observed Delta") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
+
+ggplot(mapping=aes(x=abs(BSGP_Delta),y=abs(stan_dat$total_puts_American$delta[test_start:test_end]))) +
+  geom_point() +
+  labs(title = "Predicted vs Data - Black-Scholes Integrated SGP",
+       x = "Predicted Delta",
+       y = "Observed Delta") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
+
+
+ggplot(mapping=aes(x=abs(BSGP_Delta),y=abs(BS_Delta))) +
+  geom_point() +
+  labs(title = "BSGP vs BS - Predicted Absolute Delta Values",
+       x = "Predicted BSGP Delta",
+       y = "Predicted BS Delta") +
+  theme_bw() +
+  theme(text=element_text(size=16))+
+  geom_abline(intercept = 0, slope = 1)
+
+```
+
+
+##Interpretations
+
+5-1: Contour Plots of Forward Price & Strike Price
+
+```{r contour plots_forward_strike}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
+
+x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,1],K=x2_cont_bs[row,2],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,3],divrate=x2_cont_bs[row,5])$Price)
+}
+
+post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=length(x2_cont[,1]), bs = blackscholes_test_cont,variables = 6)
+
+
+# post_data
+
+
+BS_Delta_cont <- greeks(bsput(s=as.numeric(x2_cont[,1]), k=as.numeric(x2_cont[,2]), v=as.numeric(x2_cont[,3]), r=as.numeric(x2_cont[,6]), tt=as.numeric(x2_cont[,4]), d=as.numeric(x2_cont[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
+
+vector_c_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_cont_bs,iter=1, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+exp_vector_c_values_cont <- extract(vector_c_values_cont,permuted=FALSE)
+exp_vector_c_values_cont <- c(colMeans(exp_vector_c_values_cont))
+exp_vector_c_values_cont <- exp_vector_c_values_cont[1:(length(exp_vector_c_values_cont)-1)]
+
+
+vector_k_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+exp_vector_k_values_cont <- extract(vector_k_values_cont,permuted=FALSE)
+exp_vector_k_values_cont <- c(colMeans(exp_vector_k_values_cont))
+exp_vector_k_values_cont <- exp_vector_k_values_cont[1:(length(exp_vector_k_values_cont)-1)]
+
+
+vector_k_cont <- matrix(exp_vector_k_values_cont, nrow(x2_cont), nrow(stan_dat$x), byrow=FALSE)
+
+BSGP_Delta_cont <- BS_Delta_cont + vector_k_cont %*% exp_vector_c_values_cont
+
+
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-  matrix(BSGP_Delta_cont, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BSGP Deltas (Spot Price & Strike Price)")
+
+# #Contour of Variance
+# col.pal<-colorRampPalette(c("blue", "yellow"))
+# colors<-col.pal(100)
+# z <-   matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+# 
+# # height of facets
+# z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# # Range of the facet center on a 100-scale (number of colors)
+# z.facet.range<-cut(z.facet.center, 100)
+# 
+# persp(dim1, dim2,z, phi = 45, theta = 135, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Spot Price & Strike Price)")
+# par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-   matrix(BS_Delta_cont, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BlackScholes Deltas (Spot Price & Strike Price)")
+#Contour of Variance
+
+```
+
+5-2: Contour Plots of Implied Volatility & Time to Expiration
+
+```{r}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$time_to_exp[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
+
+x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,4],r=x2_cont_bs[row,6],t=x2_cont_bs[row,2],vola=x2_cont_bs[row,1],divrate=x2_cont_bs[row,5])$Price)
+}
+
+
+post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
+
+
+# post_data
+
+pred_gp_cont_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
 #Computing Mean
-y_predict_values_bs <- extract(pred_gp_bs,permuted=FALSE)
-y_mean_values_bs <- c(colMeans(y_predict_values_bs))
-y_mean_values_bs <- y_mean_values_bs[1:(length(y_mean_values_bs)-1)]
+y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
+y_mean_values_cont_bs <- c(colMeans(y_predict_values_cont_bs))
+y_mean_values_cont_bs <- y_mean_values_cont_bs[1:(length(y_mean_values_cont_bs)-1)]
 
 #Computing Standard Deviation
-pred_gp_summary_bs <- summary(pred_gp_bs, sd=c("sd"))$summary
-pred_gp_sd_bs <- pred_gp_summary_bs[, c("sd")]
-y_sd_values_bs <- pred_gp_sd_bs[1:(length(pred_gp_sd_bs)-1)]
+pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
+pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
+y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+z <-  matrix(BS_Delta, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "BSGP Average Price (Impl_vol & Time_to_Exp)")
+#Contour of Variance
+z <-  matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Impl_vol & Time_to_Exp)")
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+z <-  matrix(blackscholes_test_cont, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "Blackscholes Average Price (Impl_vol & Time_to_Exp)")
+#Contour of Variance
 ```
+
+5-3: Contour Plots of Strike Price and Implied Volatility
+
+```{r contour plots_rates_time}
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+X.grid <- expand.grid(x1 = dim1, x2 = dim2)
+
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
+
+x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
+
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
+x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
+
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
+
+x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
+
+blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
+for (row in 1:nrow(data.frame(x2_cont_bs))){
+  blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,1],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,2],divrate=x2_cont_bs[row,5])$Price)
+}
+
+
+post_data_cont_SGP <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
+
+post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
+
+
+# post_data
+
+pred_gp_cont_SGP <- stan(file="Predictive GP_6dimension_SGP.stan", data=post_data_cont_SGP,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+pred_gp_cont_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+#Computing Mean
+y_predict_values_cont_SGP <- extract(pred_gp_cont_SGP,permuted=FALSE)
+y_mean_values_cont_SGP <- c(colMeans(y_predict_values_cont_SGP))
+y_mean_values_cont_SGP <- y_mean_values_cont_SGP[1:(length(y_mean_values_cont_SGP)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont_SGP <- summary(pred_gp_cont_SGP, sd=c("sd"))$summary
+pred_gp_sd_cont_SGP <- pred_gp_summary_cont_SGP[, c("sd")]
+y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+z <- matrix(y_mean_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "SGP Average Price (Strike Price & Impl_vol)")
+#Contour of Variance
+z <-  matrix(y_sd_values_cont_SGP, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "SGP Standard Deviation (Strike Price & Impl_vol)")
+
+#Computing Mean
+y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
+y_mean_values_cont_bs <- c(colMeans(y_predict_values_cont_bs))
+y_mean_values_cont_bs <- y_mean_values_cont_bs[1:(length(y_mean_values_cont_bs)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
+pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
+y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+z <-  matrix(y_mean_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed" ,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "BSGP Average Price (Strike Price & Impl_vol)")
+#Contour of Variance
+z <-  matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z,phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Strike Price & Impl_vol)")
+
+par(mfrow = c(1, 2))
+#Contour for Predictions aka mean values of predicitons
+z <-  matrix(blackscholes_test_cont, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2,z , phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
+#Contour of Variance
+# contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
+# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
+# persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Strike Price & Impl_vol)")
+```
+
 
 
 9-1 Computing Actual Delta for the next day
@@ -1856,51 +2220,51 @@ total_delta_BS <- sum(BS_Delta_1[unglue_vec(top10_options, "y_predict[{x}]", con
 ```
 
 ```{r}
-SPY <- read_csv("SPY.csv")
-SPY <- SPY %>% 
-  select(Date,Close)
-
-hedge_price <- SPY$Close[SPY$Date == '2019-06-10']
-hedge_price_BSGP <- hedge_price * total_delta_BSGP
-hedge_price_BS <- hedge_price * total_delta_BS
-
-tmr_price <- SPY$Close[7:nrow(SPY)]
-
-profit_overnight_BSGP <- c()
-profit_overnight_BS <- c()
-
-for (price in tmr_price){
-  profit_overnight_BSGP <- c(profit_overnight_BSGP,(price-hedge_price)*abs(total_delta_BSGP))
-  profit_overnight_BS <- c(profit_overnight_BS,(price-hedge_price)*abs(total_delta_BS))
-}
-
-
-mean(profit_overnight_BS)
-mean(profit_overnight_BSGP)
-
-# (tmr_price-hedge_price)*abs(total_delta_BSGP)
-# (tmr_price-hedge_price)*abs(total_delta_BS)
-
-potential_stock_price_overnight <- seq(hedge_price*0.99,hedge_price*1.01, by=0.1)
-
-potential_profit_overnight_BSGP <- c()
-for (potential_price in potential_stock_price_overnight){
-  potential_profit_overnight_BSGP <- c(potential_profit_overnight_BSGP,(potential_price - hedge_price)*abs(total_delta_BSGP))
-}
-
-potential_profit_overnight_BS <- c()
-for (potential_price in potential_stock_price_overnight){
-  potential_profit_overnight_BS <- c(potential_profit_overnight_BS,(potential_price - hedge_price)*abs(total_delta_BS))
-}
-
-ggplot() +
-  geom_point(aes(x=as.Date(SPY$Date[11:nrow(SPY)]), y=profit_overnight_BSGP), colour = "blue") +
-  geom_point(aes(x=as.Date(SPY$Date[11:nrow(SPY)]), y=profit_overnight_BS), colour = "red")
-
-
-ggplot() +
-  geom_point(aes(x=potential_stock_price_overnight, y=potential_profit_overnight_BSGP), colour = "blue") +
-  geom_point(aes(x=potential_stock_price_overnight, y=potential_profit_overnight_BS), colour = "red")
+# SPY <- read_csv("SPY.csv")
+# SPY <- SPY %>% 
+#   select(Date,Close)
+# 
+# hedge_price <- SPY$Close[SPY$Date == '2019-06-10']
+# hedge_price_BSGP <- hedge_price * total_delta_BSGP
+# hedge_price_BS <- hedge_price * total_delta_BS
+# 
+# tmr_price <- SPY$Close[7:nrow(SPY)]
+# 
+# profit_overnight_BSGP <- c()
+# profit_overnight_BS <- c()
+# 
+# for (price in tmr_price){
+#   profit_overnight_BSGP <- c(profit_overnight_BSGP,(price-hedge_price)*abs(total_delta_BSGP))
+#   profit_overnight_BS <- c(profit_overnight_BS,(price-hedge_price)*abs(total_delta_BS))
+# }
+# 
+# 
+# mean(profit_overnight_BS)
+# mean(profit_overnight_BSGP)
+# 
+# # (tmr_price-hedge_price)*abs(total_delta_BSGP)
+# # (tmr_price-hedge_price)*abs(total_delta_BS)
+# 
+# potential_stock_price_overnight <- seq(hedge_price*0.99,hedge_price*1.01, by=0.1)
+# 
+# potential_profit_overnight_BSGP <- c()
+# for (potential_price in potential_stock_price_overnight){
+#   potential_profit_overnight_BSGP <- c(potential_profit_overnight_BSGP,(potential_price - hedge_price)*abs(total_delta_BSGP))
+# }
+# 
+# potential_profit_overnight_BS <- c()
+# for (potential_price in potential_stock_price_overnight){
+#   potential_profit_overnight_BS <- c(potential_profit_overnight_BS,(potential_price - hedge_price)*abs(total_delta_BS))
+# }
+# 
+# ggplot() +
+#   geom_point(aes(x=as.Date(SPY$Date[11:nrow(SPY)]), y=profit_overnight_BSGP), colour = "blue") +
+#   geom_point(aes(x=as.Date(SPY$Date[11:nrow(SPY)]), y=profit_overnight_BS), colour = "red")
+# 
+# 
+# ggplot() +
+#   geom_point(aes(x=potential_stock_price_overnight, y=potential_profit_overnight_BSGP), colour = "blue") +
+#   geom_point(aes(x=potential_stock_price_overnight, y=potential_profit_overnight_BS), colour = "red")
 
 ```
 
@@ -2160,11 +2524,6 @@ ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_da
 
 ##Maybe try for 2018 data, or other periods -> prove that the model is robust enough (what is the good amount of training trials to prove it is robust)
 ##Maybe try 1 year oR monthly rebalancing and compare performance wit hBS delta-hedged portfiolo
-
-##What does the DAD really mean in financial aspect -> the idea of sensitivity of the training data points to the model means WHAT???
-
-##Complete Section 4 with DAD analysis - classification model (TREES(boosting,rf,bagging) aand then generate importance plots or interpret results, multinomial model and fit with response of 0,1,2,3 of DAD quantiles) (https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/) maybe use AIC,BIC for model selection
-
 #where can swe submit (journal) the delta-hedge paper journal - separate this part into separate overleaf file. 
 
 ##delta-hedging -> bs holds unrealistic assumptions which is why the disparity is larger for long-term.
@@ -2173,8 +2532,6 @@ ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_da
 
 #change equation 17 and 18 to match notation
 
-#DAD analysis X -> JBES
-
 #do same process for deltas (computing, predictive uncertainty, DAD)
 #Novelty of the model (combines both shitty approaches data-driven and model-driven) -> predicting delta(this is even unobserved)
 #include content on this to JBES 
@@ -2182,3 +2539,5 @@ ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_da
 #Get rid of DAD name
 
 #Morris paper to calculaute predictive uncertainty for delta values
+
+##save data file for stan files
