@@ -1214,12 +1214,12 @@ vector_k_values <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan",
 exp_vector_k_values <- extract(vector_k_values,permuted=FALSE)
 exp_vector_k_values <- c(colMeans(exp_vector_k_values))
 exp_vector_k_values <- exp_vector_k_values[1:(length(exp_vector_k_values)-1)]
+```
 
-
+```{r}
 vector_k <- matrix(exp_vector_k_values, nrow(x2), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta <- BS_Delta + vector_k %*% exp_vector_c_values
-
 ```
 
 ```{r}
@@ -1262,8 +1262,8 @@ ggplot(mapping=aes(x=abs(BSGP_Delta),y=abs(BS_Delta))) +
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
 x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
 
-dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
-dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 15)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 15)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
 x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
@@ -1280,8 +1280,8 @@ x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp
 x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
-dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
-dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 15)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 15)
 X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
 
 x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
@@ -1306,7 +1306,7 @@ exp_vector_c_values_cont <- c(colMeans(exp_vector_c_values_cont))
 exp_vector_c_values_cont <- exp_vector_c_values_cont[1:(length(exp_vector_c_values_cont)-1)]
 
 
-vector_k_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+vector_k_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan", data=post_data_cont_bs,iter=1, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
 exp_vector_k_values_cont <- extract(vector_k_values_cont,permuted=FALSE)
 exp_vector_k_values_cont <- c(colMeans(exp_vector_k_values_cont))
@@ -1317,9 +1317,9 @@ vector_k_cont <- matrix(exp_vector_k_values_cont, nrow(x2_cont), nrow(stan_dat$x
 
 BSGP_Delta_cont <- BS_Delta_cont + vector_k_cont %*% exp_vector_c_values_cont
 
+Delta_disc <- BSGP_Delta_cont - BS_Delta_cont
 
-
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 3))
 #Contour for Predictions aka mean values of predicitons
 col.pal<-colorRampPalette(c("blue", "red"))
 colors<-col.pal(100)
@@ -1330,7 +1330,7 @@ z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -
 # Range of the facet center on a 100-scale (number of colors)
 z.facet.range<-cut(z.facet.center, 100)
 
-persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BSGP Deltas (Spot Price & Strike Price)")
+persp(dim1, dim2, z, phi = 45, theta = 235, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Delta", main = "BSGP Deltas (Spot Price & Strike Price)")
 
 # #Contour of Variance
 # col.pal<-colorRampPalette(c("blue", "yellow"))
@@ -1354,8 +1354,21 @@ z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -
 # Range of the facet center on a 100-scale (number of colors)
 z.facet.range<-cut(z.facet.center, 100)
 
-persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BlackScholes Deltas (Spot Price & Strike Price)")
-#Contour of Variance
+persp(dim1, dim2,z, phi = 45, theta = 235, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Delta", main = "BlackScholes Deltas (Spot Price & Strike Price)")
+
+##Delta Discrepancies
+
+#Contour for Predictions aka mean values of predicitons
+col.pal<-colorRampPalette(c("red", "yellow"))
+colors<-col.pal(100)
+z <-  matrix(Delta_disc, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 235, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Delta Discrepancy", main = "Delta Discrepancies (Spot Price & Strike Price)")
 
 ```
 
@@ -1365,8 +1378,8 @@ persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.ra
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
 x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])
 
-dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
-dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 15)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 15)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
 x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
@@ -1383,8 +1396,8 @@ x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_pric
 x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
-dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
-dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 15)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 15)
 X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
 
 x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
@@ -1400,49 +1413,81 @@ post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post
 
 # post_data
 
-pred_gp_cont_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
-#Computing Mean
-y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
-y_mean_values_cont_bs <- c(colMeans(y_predict_values_cont_bs))
-y_mean_values_cont_bs <- y_mean_values_cont_bs[1:(length(y_mean_values_cont_bs)-1)]
+BS_Delta_cont <- greeks(bsput(s=as.numeric(x2_cont[,1]), k=as.numeric(x2_cont[,2]), v=as.numeric(x2_cont[,3]), r=as.numeric(x2_cont[,6]), tt=as.numeric(x2_cont[,4]), d=as.numeric(x2_cont[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
 
-#Computing Standard Deviation
-pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
-pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
-y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
+vector_c_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_cont_bs,iter=1, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
-par(mfrow = c(1, 2))
+exp_vector_c_values_cont <- extract(vector_c_values_cont,permuted=FALSE)
+exp_vector_c_values_cont <- c(colMeans(exp_vector_c_values_cont))
+exp_vector_c_values_cont <- exp_vector_c_values_cont[1:(length(exp_vector_c_values_cont)-1)]
+
+
+vector_k_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan", data=post_data_cont_bs,iter=1, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+exp_vector_k_values_cont <- extract(vector_k_values_cont,permuted=FALSE)
+exp_vector_k_values_cont <- c(colMeans(exp_vector_k_values_cont))
+exp_vector_k_values_cont <- exp_vector_k_values_cont[1:(length(exp_vector_k_values_cont)-1)]
+
+
+vector_k_cont <- matrix(exp_vector_k_values_cont, nrow(x2_cont), nrow(stan_dat$x), byrow=FALSE)
+
+BSGP_Delta_cont <- BS_Delta_cont + vector_k_cont %*% exp_vector_c_values_cont
+
+Delta_disc <- BSGP_Delta_cont - BS_Delta_cont
+
+par(mfrow = c(1, 3))
 #Contour for Predictions aka mean values of predicitons
-z <-  matrix(BS_Delta, length(dim1), length(dim2))
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-  matrix(BSGP_Delta_cont, length(dim1), length(dim2))
 
 # height of facets
 z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
 # Range of the facet center on a 100-scale (number of colors)
 z.facet.range<-cut(z.facet.center, 100)
 
-persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "BSGP Average Price (Impl_vol & Time_to_Exp)")
-#Contour of Variance
-z <-  matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+persp(dim1, dim2, z, phi = 45, theta = 225, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Delta", main = "BSGP Deltas (Implied_vol & Time_to_exp)")
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
-
-persp(dim1, dim2, z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Impl_vol & Time_to_Exp)")
-
-par(mfrow = c(1, 2))
+# #Contour of Variance
+# col.pal<-colorRampPalette(c("blue", "yellow"))
+# colors<-col.pal(100)
+# z <-   matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+# 
+# # height of facets
+# z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# # Range of the facet center on a 100-scale (number of colors)
+# z.facet.range<-cut(z.facet.center, 100)
+# 
+# persp(dim1, dim2,z, phi = 45, theta = 135, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Spot Price & Strike Price)")
+# par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-z <-  matrix(blackscholes_test_cont, length(dim1), length(dim2))
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-   matrix(BS_Delta_cont, length(dim1), length(dim2))
 
 # height of facets
 z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
 # Range of the facet center on a 100-scale (number of colors)
 z.facet.range<-cut(z.facet.center, 100)
 
-persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Average Price", main = "Blackscholes Average Price (Impl_vol & Time_to_Exp)")
+persp(dim1, dim2,z, phi = 45, theta = 225, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Delta", main = "BSGP Deltas (Implied_vol & Time_to_exp)")
 #Contour of Variance
+
+
+##Delta Discrepancies
+
+#Contour for Predictions aka mean values of predicitons
+col.pal<-colorRampPalette(c("red", "yellow"))
+colors<-col.pal(100)
+z <-  matrix(Delta_disc, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 235, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied VOlatility", ylab = "Time to Expiration", zlab = "Delta Discrepancy", main = "Delta Discrepancies (Impl_vol & Time_to_exp)")
 ```
 
 5-3: Contour Plots of Strike Price and Implied Volatility
@@ -1451,8 +1496,8 @@ persp(dim1, dim2,z, phi = 45, theta = 45, border="grey80",col=colors[z.facet.ran
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
 x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
 
-dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 25)
-dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 25)
+dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 15)
+dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 15)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
 x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])),nrow(X.grid))
@@ -1469,8 +1514,8 @@ x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp
 x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
-dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 25)
-dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 25)
+dim1_bs <- seq(min(x.grid_1_cont_bs),max(x.grid_1_cont_bs),length.out = 15)
+dim2_bs <- seq(min(x.grid_2_cont_bs),max(x.grid_2_cont_bs),length.out = 15)
 X.grid_bs <- expand.grid(x1 = dim1_bs, x2 = dim2_bs)
 
 x2_cont_bs <- cbind(X.grid_bs,x.grid_3_cont_bs,x.grid_4_cont_bs,x.grid_5_cont_bs,x.grid_6_cont_bs)
@@ -1480,93 +1525,90 @@ for (row in 1:nrow(data.frame(x2_cont_bs))){
   blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,1],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,2],divrate=x2_cont_bs[row,5])$Price)
 }
 
-
-post_data_cont_SGP <- list(theta=c(post_mean_theta_1_SGP,post_mean_theta_2_SGP,post_mean_theta_3_SGP,post_mean_theta_4_SGP,post_mean_theta_5_SGP,post_mean_theta_6_SGP),sigma2=post_mean_sigma2_SGP,gamma2=post_mean_gamma2_SGP,mu=post_mean_mu_SGP,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
-
 post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
 
 
 # post_data
 
-pred_gp_cont_SGP <- stan(file="Predictive GP_6dimension_SGP.stan", data=post_data_cont_SGP,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+BS_Delta_cont <- greeks(bsput(s=as.numeric(x2_cont[,1]), k=as.numeric(x2_cont[,2]), v=as.numeric(x2_cont[,3]), r=as.numeric(x2_cont[,6]), tt=as.numeric(x2_cont[,4]), d=as.numeric(x2_cont[,5])), complete=TRUE, long=FALSE, initcaps=TRUE)$Delta
 
-pred_gp_cont_bs <- stan(file="Predictive GP_6dimension_withBS_SGP.stan", data=post_data_cont_bs,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+vector_c_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectorc.stan", data=post_data_cont_bs,iter=1, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
-#Computing Mean
-y_predict_values_cont_SGP <- extract(pred_gp_cont_SGP,permuted=FALSE)
-y_mean_values_cont_SGP <- c(colMeans(y_predict_values_cont_SGP))
-y_mean_values_cont_SGP <- y_mean_values_cont_SGP[1:(length(y_mean_values_cont_SGP)-1)]
+exp_vector_c_values_cont <- extract(vector_c_values_cont,permuted=FALSE)
+exp_vector_c_values_cont <- c(colMeans(exp_vector_c_values_cont))
+exp_vector_c_values_cont <- exp_vector_c_values_cont[1:(length(exp_vector_c_values_cont)-1)]
 
-#Computing Standard Deviation
-pred_gp_summary_cont_SGP <- summary(pred_gp_cont_SGP, sd=c("sd"))$summary
-pred_gp_sd_cont_SGP <- pred_gp_summary_cont_SGP[, c("sd")]
-y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
-par(mfrow = c(1, 2))
-#Contour for Predictions aka mean values of predicitons
-z <- matrix(y_mean_values_cont_SGP, length(dim1), length(dim2))
+vector_k_values_cont <- stan(file="Predictive GP_6dimension_withBS_SGP_vectork.stan", data=post_data_cont_bs,iter=1, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
+exp_vector_k_values_cont <- extract(vector_k_values_cont,permuted=FALSE)
+exp_vector_k_values_cont <- c(colMeans(exp_vector_k_values_cont))
+exp_vector_k_values_cont <- exp_vector_k_values_cont[1:(length(exp_vector_k_values_cont)-1)]
 
-persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "SGP Average Price (Strike Price & Impl_vol)")
-#Contour of Variance
-z <-  matrix(y_sd_values_cont_SGP, length(dim1), length(dim2))
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
+vector_k_cont <- matrix(exp_vector_k_values_cont, nrow(x2_cont), nrow(stan_dat$x), byrow=FALSE)
 
-persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed", xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "SGP Standard Deviation (Strike Price & Impl_vol)")
+BSGP_Delta_cont <- BS_Delta_cont + vector_k_cont %*% exp_vector_c_values_cont
 
-#Computing Mean
-y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
-y_mean_values_cont_bs <- c(colMeans(y_predict_values_cont_bs))
-y_mean_values_cont_bs <- y_mean_values_cont_bs[1:(length(y_mean_values_cont_bs)-1)]
-
-#Computing Standard Deviation
-pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
-pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
-y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
+Delta_disc <- BSGP_Delta_cont - BS_Delta_cont
 
 par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-z <-  matrix(y_mean_values_cont_bs, length(dim1), length(dim2))
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-  matrix(BSGP_Delta_cont, length(dim1), length(dim2))
 
 # height of facets
 z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
 # Range of the facet center on a 100-scale (number of colors)
 z.facet.range<-cut(z.facet.center, 100)
 
-persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed" ,xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "BSGP Average Price (Strike Price & Impl_vol)")
-#Contour of Variance
-z <-  matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+persp(dim1, dim2, z, phi = 45, theta = 225, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Delta", main = "BSGP Deltas (Strike Price & Impl_vol)")
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
-
-persp(dim1, dim2, z,phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Strike Price & Impl_vol)")
-
-par(mfrow = c(1, 2))
+# #Contour of Variance
+# col.pal<-colorRampPalette(c("blue", "yellow"))
+# colors<-col.pal(100)
+# z <-   matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+# 
+# # height of facets
+# z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# # Range of the facet center on a 100-scale (number of colors)
+# z.facet.range<-cut(z.facet.center, 100)
+# 
+# persp(dim1, dim2,z, phi = 45, theta = 135, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Spot Price & Strike Price)")
+# par(mfrow = c(1, 2))
 #Contour for Predictions aka mean values of predicitons
-z <-  matrix(blackscholes_test_cont, length(dim1), length(dim2))
+col.pal<-colorRampPalette(c("blue", "red"))
+colors<-col.pal(100)
+z <-   matrix(BS_Delta_cont, length(dim1), length(dim2))
 
 # height of facets
 z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
 # Range of the facet center on a 100-scale (number of colors)
 z.facet.range<-cut(z.facet.center, 100)
 
-persp(dim1, dim2,z , phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Average Price", main = "Blackscholes Average Price (Strike Price & Impl_vol)")
+persp(dim1, dim2,z, phi = 45, theta = 225, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Delta", main = "BSGP Deltas (Strike Price & Impl_vol)")
 #Contour of Variance
-# contour(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), labcex =1.5, main = "Black-Scholes Standard Deviation in 2D (Strike Price & Impl_vol)", xlab= "Strike Price", ylab="Implied Volatility")
-# points(x2_cont[,1], x2_cont[,2], pch = 19, cex = 0.5, col = "red")
-# persp(dim1, dim2, matrix(sd(blackscholes_test_cont), length(dim1), length(dim2)), phi = 45, theta = 45, xlab="Strike Price", ylab = "Implied Volatility", zlab = "Standard Deviation", main = "Blackscholes Standard Deviation (Strike Price & Impl_vol)")
+
+##Delta Discrepancies
+
+#Contour for Predictions aka mean values of predicitons
+col.pal<-colorRampPalette(c("red", "yellow"))
+colors<-col.pal(100)
+z <-  matrix(Delta_disc, length(dim1), length(dim2))
+
+# height of facets
+z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
+# Range of the facet center on a 100-scale (number of colors)
+z.facet.range<-cut(z.facet.center, 100)
+
+persp(dim1, dim2, z, phi = 45, theta = 235, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Strike Price", ylab = "Implied Volatility", zlab = "Delta Discrepancy", main = "Delta Discrepancies (Strike Price & Impl_vol)")
 ```
+
+
+
+
+
 
 
 
