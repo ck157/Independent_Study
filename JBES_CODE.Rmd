@@ -267,6 +267,7 @@ ggplot(data=MSE_data, mapping=aes(x=date, y=MSE_values, colour = Method, shape =
 5-1: Contour Plots of Forward Price & Strike Price
 
 ```{r contour plots_forward_strike}
+library(plotly)
 x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
 x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
 
@@ -320,35 +321,58 @@ pred_gp_summary_cont_SGP <- summary(pred_gp_cont_SGP, sd=c("sd"))$summary
 pred_gp_sd_cont_SGP <- pred_gp_summary_cont_SGP[, c("sd")]
 y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 
-par(mfrow = c(1, 2))
-#Contour for Predictions aka mean values of predicitons
+
+max_strike <- max(stan_dat$total_puts_American$strike_price)
+min_strike <- min(stan_dat$total_puts_American$strike_price)
+max_spot <- max(stan_dat$total_puts_American$forward_price)
+min_spot <- min(stan_dat$total_puts_American$forward_price)
+
+color <- matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
+dim(color) <- dim(matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
+
+fig_sgp_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
+        colors=c('blue','red'))
+fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = FALSE,contours = list(
+  z = list(
+    show=TRUE,
+    usecolormap=FALSE,
+    highlightcolor = "#ff0000",
+    project=list(z=TRUE)
+  )
+))
+
+fig_sgp_price <- fig_sgp_price %>% layout(title = 'SGP', 
+  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price')
+  )
+)
+
+fig_sgp_price
 
 
-# Color palette (100 colors)
-col.pal<-colorRampPalette(c("blue", "red"))
-colors<-col.pal(100)
-z <-  matrix(y_mean_values_cont_SGP, length(dim1), length(dim2))
-
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
-
-
-library(base)
-persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "SGP Means (Spot Price & Strike Price)")
 
 #Contour of Variance
-col.pal<-colorRampPalette(c("blue", "yellow"))
-colors<-col.pal(100)
-z <-  matrix(y_sd_values_cont_SGP, length(dim1), length(dim2))
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
+color <- matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
+dim(color) <- dim(matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-persp(dim1, dim2, z, phi = 45, theta = 135,  border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "SGP Standard Deviation (Spot Price & Strike Price)")
+fig_sgp_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
+        colors=c('blue','red'))
+fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE,contours = list(
+  z = list(
+    show=TRUE,
+    usecolormap=FALSE,
+    highlightcolor = "#ff0000",
+    project=list(z=TRUE)
+  )
+))
+
+fig_sgp_sd <- fig_sgp_sd %>% layout(title = 'SGP', 
+  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price')
+  )
+)
+
+fig_sgp_sd
+
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -360,42 +384,70 @@ pred_gp_summary_cont_bs <- summary(pred_gp_cont_bs, sd=c("sd"))$summary
 pred_gp_sd_cont_bs <- pred_gp_summary_cont_bs[, c("sd")]
 y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 
-par(mfrow = c(1, 2))
-#Contour for Predictions aka mean values of predicitons
-col.pal<-colorRampPalette(c("blue", "red"))
-colors<-col.pal(100)
-z <-  matrix(y_mean_values_cont_bs, length(dim1), length(dim2))
+color <- matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
+dim(color) <- dim(matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
+fig_bs_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
+        colors=c('blue','red'))
+fig_bs_price <- fig_bs_price %>% add_surface(showscale = FALSE,contours = list(
+  z = list(
+    show=TRUE,
+    usecolormap=FALSE,
+    highlightcolor = "#ff0000",
+    project=list(z=TRUE)
+  )
+))
 
-persp(dim1, dim2, z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BSGP Means (Spot Price & Strike Price)")
-#Contour of Variance
-col.pal<-colorRampPalette(c("blue", "yellow"))
-colors<-col.pal(100)
-z <-   matrix(y_sd_values_cont_bs, length(dim1), length(dim2))
+fig_bs_price <- fig_bs_price %>% layout(title = 'BSGP', 
+  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price')
+  )
+)
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
+fig_bs_price
 
-persp(dim1, dim2,z, phi = 45, theta = 135, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Standard Deviation", main = "BSGP Standard Deviation (Spot Price & Strike Price)")
-par(mfrow = c(1, 2))
-#Contour for Predictions aka mean values of predicitons
-col.pal<-colorRampPalette(c("blue", "red"))
-colors<-col.pal(100)
-z <-   matrix(blackscholes_test_cont, length(dim1), length(dim2))
+##Contour of Variance
+color <- matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
+dim(color) <- dim(matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-# height of facets
-z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -ncol(z)])/4
-# Range of the facet center on a 100-scale (number of colors)
-z.facet.range<-cut(z.facet.center, 100)
+fig_bs_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
+        colors=c('blue','red'))
+fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = FALSE,contours = list(
+  z = list(
+    show=TRUE,
+    usecolormap=FALSE,
+    highlightcolor = "#ff0000",
+    project=list(z=TRUE)
+  )
+))
 
-persp(dim1, dim2,z, phi = 45, theta = 315, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Spot Price", ylab = "Strike Price", zlab = "Average Price", main = "BlackScholes Average Price (Spot Price & Strike Price)")
-#Contour of Variance
+fig_bs_sd <- fig_bs_sd %>% layout(title = 'BSGP', 
+  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price')
+  )
+)
+
+fig_bs_sd
+
+
+color <- matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
+dim(color) <- dim(matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
+
+fig_blackscholes_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
+        colors=c('blue','red'))
+fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = FALSE,contours = list(
+  z = list(
+    show=TRUE,
+    usecolormap=FALSE,
+    highlightcolor = "#ff0000",
+    project=list(z=TRUE)
+  )
+))
+
+fig_blackscholes_price <- fig_blackscholes_price %>% layout(title = 'Black-Scholes', 
+  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price')
+  )
+)
+
+fig_blackscholes_price
 
 ```
 
@@ -1471,7 +1523,7 @@ z.facet.center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -
 # Range of the facet center on a 100-scale (number of colors)
 z.facet.range<-cut(z.facet.center, 100)
 
-persp(dim1, dim2,z, phi = 45, theta = 225, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Delta", main = "BSGP Deltas (Implied_vol & Time_to_exp)")
+persp(dim1, dim2,z, phi = 45, theta = 225, border="grey80",col=colors[z.facet.range],shade=0.4,expand=0.4, nticks = 2,ticktype="detailed",xlab="Implied Volatility", ylab = "Time to Expiration", zlab = "Delta", main = "BS Deltas (Implied_vol & Time_to_exp)")
 #Contour of Variance
 
 
@@ -2583,3 +2635,11 @@ ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_da
 #Morris paper to calculaute predictive uncertainty for delta values
 
 ##save data file for stan files
+
+
+
+##Things to do
+
+#1. plot formatting
+#2. Write-up for deltas
+#3. Derivation for delta uncertainty
