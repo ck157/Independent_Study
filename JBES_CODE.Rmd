@@ -1489,24 +1489,24 @@ ggplot(mapping=aes(x=abs(BSGP_Delta),y=abs(BS_Delta))) +
 5-1: Contour Plots of Forward Price & Strike Price
 
 ```{r contour plots_forward_strike}
-x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
-x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])
+x.grid_1_cont <- as.numeric(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])
+x.grid_2_cont <- as.numeric(stan_dat$total_puts_American$forward_price_scaled[test_start:test_end])
 
 dim1 <- seq(min(x.grid_1_cont),max(x.grid_1_cont),length.out = 15)
 dim2 <- seq(min(x.grid_2_cont),max(x.grid_2_cont),length.out = 15)
 X.grid <- expand.grid(x1 = dim1, x2 = dim2)
 
-x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility_scaled[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_3_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp_scaled[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price_scaled[test_start:test_end])),nrow(X.grid))
 x.grid_5_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield_scaled[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate_scaled[test_start:test_end])),nrow(X.grid))
 
 x2_cont <- cbind(X.grid,x.grid_3_cont,x.grid_4_cont,x.grid_5_cont,x.grid_6_cont)
 
-x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
-x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$strike_price[test_start:test_end])
-x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$impl_volatility[test_start:test_end])),nrow(X.grid))
-x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_1_cont_bs <- as.numeric(stan_dat$total_puts_American$impl_volatility[test_start:test_end])
+x.grid_2_cont_bs <- as.numeric(stan_dat$total_puts_American$forward_price[test_start:test_end])
+x.grid_3_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$time_to_exp[test_start:test_end])),nrow(X.grid))
+x.grid_4_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$strike_price[test_start:test_end])),nrow(X.grid))
 x.grid_5_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$dividend_yield[test_start:test_end])),nrow(X.grid))
 x.grid_6_cont_bs <- as.numeric(rep(mean(stan_dat$total_puts_American$interest_rate[test_start:test_end])),nrow(X.grid))
 
@@ -1549,10 +1549,10 @@ BSGP_Delta_cont <- BS_Delta_cont + vector_k_cont %*% exp_vector_c_values_cont
 
 Delta_disc <- BSGP_Delta_cont - BS_Delta_cont
 
-color <- matrix(BSGP_Delta_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
-dim(color) <- dim(matrix(BSGP_Delta_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
+color <- matrix(BSGP_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot))
+dim(color) <- dim(matrix(BSGP_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot)))
 
-fig_bs <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(BSGP_Delta_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
+fig_bs <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_spot-min_spot)+min_spot, z=matrix(BSGP_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot)), type='surface',surfacecolor=color,
         colors=c('blue','red'))
 fig_bs <- fig_bs %>% add_surface(showscale = FALSE,contours = list(
   z = list(
@@ -1564,7 +1564,7 @@ fig_bs <- fig_bs %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_bs <- fig_bs %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Delta'),camera = list(
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Spot Price'), zaxis= list(title='Delta'),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -1573,11 +1573,11 @@ fig_bs <- fig_bs %>% layout(title = 'BSGP',
 fig_bs
 
 
-color <- matrix(BS_Delta_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
-dim(color) <- dim(matrix(BS_Delta_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
+color <- matrix(BS_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot))
+dim(color) <- dim(matrix(BS_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot)))
 
-fig_blackscholes <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(BS_Delta_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
-        colors=c('blue','yellow'))
+fig_blackscholes <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_spot-min_spot)+min_spot, z=matrix(BS_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot)), type='surface',surfacecolor=color,
+        colors=c('blue','red'))
 fig_blackscholes <- fig_blackscholes %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -1587,8 +1587,8 @@ fig_blackscholes <- fig_blackscholes %>% add_surface(showscale = FALSE,contours 
   )
 ))
 
-fig_blackscholes <- fig_blackscholes %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Delta'),camera = list(
+fig_blackscholes <- fig_blackscholes %>% layout(title = 'Black-Scholes', 
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Spot Price'), zaxis= list(title='Delta'),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -1599,10 +1599,10 @@ fig_blackscholes
 
 ##Delta Discrepancies
 
-color <- matrix(Delta_disc, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
-dim(color) <- dim(matrix(Delta_disc, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
+color <- matrix(Delta_disc, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot))
+dim(color) <- dim(matrix(Delta_disc, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot)))
 
-fig_disc <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(Delta_disc, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color,
+fig_disc <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_spot-min_spot)+min_spot, z=matrix(Delta_disc, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_spot-min_spot)+min_spot)), type='surface',surfacecolor=color,
         colors=c('yellow','red'))
 fig_disc <- fig_disc %>% add_surface(showscale = FALSE,contours = list(
   z = list(
@@ -1614,7 +1614,7 @@ fig_disc <- fig_disc %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_disc <- fig_disc %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Delta Discrepancy'),camera = list(
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Spot Price'), zaxis= list(title='Delta Discrepancy'),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -1715,7 +1715,7 @@ color <- matrix(BS_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_
 dim(color) <- dim(matrix(BS_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)))
 
 fig_blackscholes <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(BS_Delta_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color,
-        colors=c('blue','yellow'))
+        colors=c('blue','red'))
 fig_blackscholes <- fig_blackscholes %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -1725,7 +1725,7 @@ fig_blackscholes <- fig_blackscholes %>% add_surface(showscale = FALSE,contours 
   )
 ))
 
-fig_blackscholes <- fig_blackscholes %>% layout(title = 'BSGP', 
+fig_blackscholes <- fig_blackscholes %>% layout(title = 'Black-Scholes', 
   scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Delta'),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
@@ -1851,7 +1851,7 @@ color <- matrix(BS_Delta_cont, length(dim1*(max_strike-min_strike)+min_strike), 
 dim(color) <- dim(matrix(BS_Delta_cont, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)))
 
 fig_blackscholes <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(BS_Delta_cont, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color,
-        colors=c('blue','yellow'))
+        colors=c('blue','red'))
 fig_blackscholes <- fig_blackscholes %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -1861,7 +1861,7 @@ fig_blackscholes <- fig_blackscholes %>% add_surface(showscale = FALSE,contours 
   )
 ))
 
-fig_blackscholes <- fig_blackscholes %>% layout(title = 'BSGP', 
+fig_blackscholes <- fig_blackscholes %>% layout(title = 'Black-Scholes', 
   scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied Volatility'), zaxis= list(title='Delta'),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
