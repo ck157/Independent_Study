@@ -427,7 +427,7 @@ fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_bs_sd <- fig_bs_sd %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Standard Deviation'),camera = list(
+  scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Standard Deviation', range = c(min(0,max(y_sd_values_cont_bs)))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -2866,11 +2866,6 @@ ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_da
 
 #change equation 17 and 18 to match notation
 
-#do same process for deltas (computing, predictive uncertainty, DAD)
-#Novelty of the model (combines both shitty approaches data-driven and model-driven) -> predicting delta(this is even unobserved)
-#include content on this to JBES 
-#we can compute sth unobserved in data just with price!!!! AMAZING!!
-#Get rid of DAD name
 
 #Morris paper to calculaute predictive uncertainty for delta values
 
@@ -2881,5 +2876,4 @@ ggplot(mapping=aes(x=DAD_data$Spot_Price,y=Training_option_price, color = DAD_da
 ##Things to do
 
 #1. plot formatting
-#2. Write-up for deltas
-#3. Derivation for delta uncertainty
+#2. Write-up for derivations
