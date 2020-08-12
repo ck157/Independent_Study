@@ -330,9 +330,9 @@ min_spot <- min(stan_dat$total_puts_American$forward_price)
 color <- matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_sgp_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale=c('blue','red'))
+fig_sgp_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='Jet', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 
-fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = TRUE,colorscale = list(c(min(y_mean_values_cont_SGP),"blue"),c(max(y_mean_values_cont_SGP),"red")), contours = list(
+fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = FALSE, contours = list(
   z = list(
     show=TRUE,
     usecolormap=FALSE,
@@ -344,12 +344,11 @@ fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = TRUE,colorscale = lis
 fig_sgp_price <- fig_sgp_price %>% layout(title = 'SGP', 
   scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
-  ),showscale = FALSE
+  )
   )
 )
 
-fig_sgp_price
-
+fig_sgp_price 
 
 
 #Contour of Variance
@@ -357,9 +356,9 @@ fig_sgp_price
 color <- matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_sgp_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colors=c('blue','yellow'))
+fig_sgp_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colors=c('blue','yellow'),cauto=F, cmin = min(y_sd_values_cont_SGP), cmax=max(y_sd_values_cont_SGP))
 
-fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = TRUE, colorscale = list(c(min(y_sd_values_cont_SGP),"blue"),c(max(y_sd_values_cont_SGP),"yellow")), contours = list(
+fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE, colorscale = list(c(min(y_sd_values_cont_SGP),"blue"),c(max(y_sd_values_cont_SGP),"yellow")), contours = list(
   z = list(
     show=TRUE,
     usecolormap=FALSE,
@@ -371,12 +370,11 @@ fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = TRUE, colorscale = list(c(m
 fig_sgp_sd <- fig_sgp_sd %>% layout(title = 'SGP', 
   scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Standard Deviation', range = c(0,max(y_sd_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
-  ),showscale = FALSE
+  )
   )
 )
 
-fig_sgp_sd
-
+fig_sgp_sd 
 
 #Computing Mean
 y_predict_values_cont_bs <- extract(pred_gp_cont_bs,permuted=FALSE)
@@ -391,10 +389,10 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 color <- matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_bs_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colors=c('blue','red'))
+fig_bs_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='Jet',cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 
 
-fig_bs_price <- fig_bs_price %>% add_surface(showscale = TRUE, colorscale = list(c(min(y_mean_values_cont_SGP),"blue"),c(max(y_mean_values_cont_SGP),"red")), contours = list(
+fig_bs_price <- fig_bs_price %>% add_surface(showscale = FALSE, contours = list(
   z = list(
     show=TRUE,
     usecolormap=FALSE,
@@ -406,19 +404,19 @@ fig_bs_price <- fig_bs_price %>% add_surface(showscale = TRUE, colorscale = list
 fig_bs_price <- fig_bs_price %>% layout(title = 'BSGP', 
   scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))), camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
-  ),showscale = FALSE
+  )
   )
 )
 
-fig_bs_price
+fig_bs_price 
 
 ##Contour of Variance
 color <- matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_bs_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colors=c('blue','yellow'))
+fig_bs_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='thermal',cauto=F, cmin = min(y_sd_values_cont_SGP), cmax=max(y_sd_values_cont_SGP))
 
-fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = TRUE, colorscale = list(c(min(y_sd_values_cont_SGP),"blue"),c(max(y_sd_values_cont_SGP),"yellow")),contours = list(
+fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = TRUE, contours = list(
   z = list(
     show=TRUE,
     usecolormap=FALSE,
@@ -430,7 +428,7 @@ fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = TRUE, colorscale = list(c(min
 fig_bs_sd <- fig_bs_sd %>% layout(title = 'BSGP', 
   scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Standard Deviation', range = c(0,max(y_sd_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
-  ),showscale = FALSE
+  )
   )
 )
 
@@ -440,9 +438,9 @@ fig_bs_sd
 color <- matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_blackscholes_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colors=c('blue','red'))
+fig_blackscholes_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='thermal', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 
-fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = TRUE, colorscale = list(c(min(y_mean_values_cont_SGP),"blue"),c(max(y_mean_values_cont_SGP),"yellow")),contours = list(
+fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = FALSE, contours = list(
   z = list(
     show=TRUE,
     usecolormap=FALSE,
@@ -454,7 +452,7 @@ fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = TRU
 fig_blackscholes_price <- fig_blackscholes_price %>% layout(title = 'Black-Scholes', 
   scene = list(xaxis = list(title='Spot Price'), yaxis = list(title='Strike Price'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
-  ),showscale = FALSE
+  )
   )
 )
 
@@ -1109,7 +1107,7 @@ blackscholes_test_cont <- rep(NA,length(x2_cont_bs[,1]))
 for (row in 1:nrow(data.frame(x2_cont_bs))){
   blackscholes_test_cont[row] <- as.numeric(blackscholes(-1,S0=x2_cont_bs[row,3],K=x2_cont_bs[row,1],r=x2_cont_bs[row,6],t=x2_cont_bs[row,4],vola=x2_cont_bs[row,2],divrate=x2_cont_bs[row,5])$Price)
 }
-
+ 
 
 post_data_cont_bs <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2_cont,N1=length(stan_dat$x[,1]),N2=nrow(x2_cont), bs = blackscholes_test_cont,variables = 6)
 
@@ -1452,6 +1450,24 @@ vector_k <- matrix(exp_vector_k_values, nrow(x2), nrow(stan_dat$x), byrow=FALSE)
 
 BSGP_Delta <- BS_Delta + vector_k %*% exp_vector_c_values
 ```
+
+```{r uncertainty of delta}
+post_data_bs_American_derivative <- list(theta=c(post_mean_theta_1_bs,post_mean_theta_2_bs,post_mean_theta_3_bs,post_mean_theta_4_bs,post_mean_theta_5_bs,post_mean_theta_6_bs),sigma2=post_mean_sigma2_bs,gamma2=post_mean_gamma2_bs,mu=post_mean_mu_bs,x_train=stan_dat$x,y1=stan_dat$y,x_test=x2,N1=length(stan_dat$x[,1]),N2=length(x2[,1]), bs = BS_Delta,variables = 6)
+# post_data
+
+posterior_derivative <- stan(file="Predictive GP_6dimension_withBS_SGP_derivative.stan", data=post_data_bs_American_derivative,iter=200, warmup=0, chains=1, seed=5838298, refresh=100, algorithm = 'Fixed_param')
+
+#Computing Mean
+y_predict_values_derivative <- extract(posterior_derivative,permuted=FALSE)
+y_mean_values_derivative <- c(colMeans(y_predict_values_derivative))
+y_mean_values_derivative <- y_mean_values_derivative[1:(length(y_mean_values_derivative)-1)]
+
+#Computing Standard Deviation
+pred_gp_summary_derivative <- summary(posterior_derivative, sd=c("sd"))$summary
+pred_gp_sd_derivative <- pred_gp_summary_derivative[, c("sd")]
+y_sd_values_derivative <- pred_gp_sd_derivative[1:(length(pred_gp_sd_derivative)-1)]
+```
+
 
 ```{r}
 ggplot(mapping=aes(x=abs(BS_Delta),y=abs(stan_dat$total_puts_American$delta[test_start:test_end]))) +
