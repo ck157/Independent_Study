@@ -330,7 +330,7 @@ min_spot <- min(stan_dat$total_puts_American$forward_price)
 color <- matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_sgp_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='Jet', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
+fig_sgp_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 
 fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = FALSE, contours = list(
   z = list(
@@ -356,9 +356,9 @@ fig_sgp_price
 color <- matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_sgp_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colors=c('blue','yellow'),cauto=F, cmin = min(y_sd_values_cont_SGP), cmax=max(y_sd_values_cont_SGP))
+fig_sgp_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale = 'YlOrRd',cauto=F, cmin = min(y_sd_values_cont_SGP), cmax=max(y_sd_values_cont_SGP))
 
-fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE, colorscale = list(c(min(y_sd_values_cont_SGP),"blue"),c(max(y_sd_values_cont_SGP),"yellow")), contours = list(
+fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE, contours = list(
   z = list(
     show=TRUE,
     usecolormap=FALSE,
@@ -389,7 +389,7 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 color <- matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_bs_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='Jet',cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
+fig_bs_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_mean_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='YlGnBu',cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 
 
 fig_bs_price <- fig_bs_price %>% add_surface(showscale = FALSE, contours = list(
@@ -414,9 +414,9 @@ fig_bs_price
 color <- matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_bs_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='thermal',cauto=F, cmin = min(y_sd_values_cont_SGP), cmax=max(y_sd_values_cont_SGP))
+fig_bs_sd <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(y_sd_values_cont_bs, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='YlOrRd',cauto=F, cmin = min(y_sd_values_cont_SGP), cmax=max(y_sd_values_cont_SGP))
 
-fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = TRUE, contours = list(
+fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = FALSE, contours = list(
   z = list(
     show=TRUE,
     usecolormap=FALSE,
@@ -438,7 +438,7 @@ fig_bs_sd
 color <- matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike))
 dim(color) <- dim(matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)))
 
-fig_blackscholes_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='thermal', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
+fig_blackscholes_price <- plot_ly(x=dim1*(max_spot-min_spot)+min_spot, y=dim2*(max_strike-min_strike)+min_strike, z=matrix(blackscholes_test_cont, length(dim1*(max_spot-min_spot)+min_spot), length(dim2*(max_strike-min_strike)+min_strike)), type='surface',surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 
 fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = FALSE, contours = list(
   z = list(
@@ -525,8 +525,8 @@ min_time <- min(stan_dat$total_puts_American$time_to_exp)
 color <- matrix(y_mean_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time))
 dim(color) <- dim(matrix(y_mean_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)))
 
-fig_sgp_price <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color,
-        colors=c('blue','red'))
+fig_sgp_price <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
+
 fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -537,20 +537,21 @@ fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = FALSE,contours = list
 ))
 
 fig_sgp_price <- fig_sgp_price %>% layout(title = 'SGP', 
-  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Predicted Price'),camera = list(
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
 )
 
 fig_sgp_price
+
 #Contour of Variance
 
 color <- matrix(y_sd_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time))
 dim(color) <- dim(matrix(y_sd_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)))
 
-fig_sgp_sd <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color,
-        colors=c('blue','yellow'))
+fig_sgp_sd <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color,colorscale='YlOrRd', cauto=F, cmin = min(y_sd_values_cont_SGP), cmax=max(y_sd_values_cont_SGP))
+
 fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -561,11 +562,12 @@ fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_sgp_sd <- fig_sgp_sd %>% layout(title = 'SGP', 
-  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Standard Deviation'),camera = list(
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Standard Deviation', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
 )
+
 
 fig_sgp_sd
 
@@ -582,8 +584,7 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 color <- matrix(y_mean_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time))
 dim(color) <- dim(matrix(y_mean_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)))
 
-fig_bs_price <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_mean_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color,
-        colors=c('blue','red'))
+fig_bs_price <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_mean_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface', surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_bs_price <- fig_bs_price %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -594,7 +595,7 @@ fig_bs_price <- fig_bs_price %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_bs_price <- fig_bs_price %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Predicted Price'),camera = list(
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -606,8 +607,7 @@ fig_bs_price
 color <- matrix(y_sd_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time))
 dim(color) <- dim(matrix(y_sd_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)))
 
-fig_bs_sd <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_sd_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color,
-        colors=c('blue','yellow'))
+fig_bs_sd <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(y_sd_values_cont_bs, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color, colorscale='YlOrRd', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -618,11 +618,12 @@ fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_bs_sd <- fig_bs_sd %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Standard Deviation'),camera = list(
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Standard Deviation', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
 )
+
 
 fig_bs_sd
 
@@ -630,8 +631,7 @@ fig_bs_sd
 color <- matrix(blackscholes_test_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time))
 dim(color) <- dim(matrix(blackscholes_test_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)))
 
-fig_blackscholes_price <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(blackscholes_test_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color,
-        colors=c('blue','red'))
+fig_blackscholes_price <- plot_ly(x=dim1*(max_impl_vol-min_impl_vol)+min_impl_vol, y=dim2*(max_time-min_time)+min_time, z=matrix(blackscholes_test_cont, length(dim1*(max_impl_vol-min_impl_vol)+min_impl_vol), length(dim2*(max_time-min_time)+min_time)), type='surface',surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -642,7 +642,7 @@ fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = FAL
 ))
 
 fig_blackscholes_price <- fig_blackscholes_price %>% layout(title = 'Black-Scholes', 
-  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Predicted Price'),camera = list(
+  scene = list(xaxis = list(title='Implied Volatility'), yaxis = list(title='Time to Expiration'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -714,8 +714,7 @@ y_sd_values_cont_SGP <- pred_gp_sd_cont_SGP[1:(length(pred_gp_sd_cont_SGP)-1)]
 color <- matrix(y_mean_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol))
 dim(color) <- dim(matrix(y_mean_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)))
 
-fig_sgp_price <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color,
-        colors=c('blue','red'))
+fig_sgp_price <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_mean_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -726,7 +725,7 @@ fig_sgp_price <- fig_sgp_price %>% add_surface(showscale = FALSE,contours = list
 ))
 
 fig_sgp_price <- fig_sgp_price %>% layout(title = 'SGP', 
-  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied Volatility'), zaxis= list(title='Predicted Price'),camera = list(
+  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied Volatility'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -738,8 +737,7 @@ fig_sgp_price
 color <- matrix(y_sd_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol))
 dim(color) <- dim(matrix(y_sd_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)))
 
-fig_sgp_sd <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color,
-        colors=c('blue','yellow'))
+fig_sgp_sd <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_sd_values_cont_SGP, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color, colorscale='YlOrRd', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -750,7 +748,7 @@ fig_sgp_sd <- fig_sgp_sd %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_sgp_sd <- fig_sgp_sd %>% layout(title = 'SGP', 
-  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied V0latility'), zaxis= list(title='Standard Deviation'),camera = list(
+  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied Volatility'), zaxis= list(title='Standard Deviation', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -771,8 +769,7 @@ y_sd_values_cont_bs <- pred_gp_sd_cont_bs[1:(length(pred_gp_sd_cont_bs)-1)]
 color <- matrix(y_mean_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol))
 dim(color) <- dim(matrix(y_mean_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)))
 
-fig_bs_price <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_mean_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color,
-        colors=c('blue','red'))
+fig_bs_price <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_mean_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_bs_price <- fig_bs_price %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -783,7 +780,7 @@ fig_bs_price <- fig_bs_price %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_bs_price <- fig_bs_price %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied V0latility'), zaxis= list(title='Predicted Price'),camera = list(
+  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied Volatility'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -795,8 +792,7 @@ fig_bs_price
 color <- matrix(y_sd_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol))
 dim(color) <- dim(matrix(y_sd_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)))
 
-fig_bs_sd <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_sd_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color,
-        colors=c('blue','yellow'))
+fig_bs_sd <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(y_sd_values_cont_bs, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)),type='surface',surfacecolor=color, colorscale='YlOrRd', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -807,7 +803,7 @@ fig_bs_sd <- fig_bs_sd %>% add_surface(showscale = FALSE,contours = list(
 ))
 
 fig_bs_sd <- fig_bs_sd %>% layout(title = 'BSGP', 
-  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied V0latility'), zaxis= list(title='Standard Deviation'),camera = list(
+  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied Volatility'), zaxis= list(title='Standard Deviation', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
@@ -819,8 +815,7 @@ fig_bs_sd
 color <- matrix(blackscholes_test_cont, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol))
 dim(color) <- dim(matrix(blackscholes_test_cont, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)))
 
-fig_blackscholes_price <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(blackscholes_test_cont, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color,
-        colors=c('blue','red'))
+fig_blackscholes_price <- plot_ly(x=dim1*(max_strike-min_strike)+min_strike, y=dim2*(max_impl_vol-min_impl_vol)+min_impl_vol, z=matrix(blackscholes_test_cont, length(dim1*(max_strike-min_strike)+min_strike), length(dim2*(max_impl_vol-min_impl_vol)+min_impl_vol)), type='surface',surfacecolor=color, colorscale='YlGnBu', cauto=F, cmin = min(y_mean_values_cont_SGP), cmax=max(y_mean_values_cont_SGP))
 fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = FALSE,contours = list(
   z = list(
     show=TRUE,
@@ -831,7 +826,7 @@ fig_blackscholes_price <- fig_blackscholes_price %>% add_surface(showscale = FAL
 ))
 
 fig_blackscholes_price <- fig_blackscholes_price %>% layout(title = 'Black-Scholes', 
-  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied V0latility'), zaxis= list(title='Predicted Price'),camera = list(
+  scene = list(xaxis = list(title='Strike Price'), yaxis = list(title='Implied Volatility'), zaxis= list(title='Predicted Price', range = c(min(y_mean_values_cont_SGP),max(y_mean_values_cont_SGP))),camera = list(
     eye=list(x=-1.25,y=-1.25,z=1.25)
   )
   )
